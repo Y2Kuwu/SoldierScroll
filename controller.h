@@ -4,18 +4,18 @@
 class Controller
 {
 public:
-Controller() = default;
-//Controller( const sf::Vector2f& currPos);
 
-
+Controller(const sf::Vector2f& currPos): currPos(currPos){
+    moving[(int)RenderIdx::GoRight] = View(1,1,1,1,1,1);
+                                        //view class
+};
 
 void init();
 void capControls();
-enum RenderIdx{};
+void timingBelt( float delta );
 
 private:
     enum class RenderIdx{
-
     GoRight,
     GoLeft,
     Crouch,
@@ -26,12 +26,17 @@ private:
 
 
 bool gameIsStarted;
-enum RenderIdx{};
 sf::Vector2f currPos;
 sf::Vector2f velocity;
 sf::Sprite spr;
-Controller moving[int( RenderIdx::Count )];
+View moving[int( RenderIdx::Count )];
+    //View class
+
+  
+    
 
 };
+
+
 
 #endif

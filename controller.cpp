@@ -1,9 +1,7 @@
 #include "controller.h"
 #include "tex.h"
 
-Controller::Controller(const sf::Vector2f& currPos): currPos(currPos){
-    moving[(int)RenderIdx::GoRight] = Controller(1,1,1,1,1,1)
-}
+
 
 void Controller::init(){
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && gameIsStarted == true)
@@ -20,5 +18,10 @@ void Controller::capControls(){
 
 }
 
-
+  void Controller::timingBelt( float delta )
+    {
+        currPos += velocity * delta;
+        moving[int (currView)].timingBelt( delta );
+        moving[int (currView)].makeSprite( spr );
+    }
 
