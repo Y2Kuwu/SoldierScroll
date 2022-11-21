@@ -1,8 +1,8 @@
 #include "controller.h"
 #include "tex.h"
 
-Controller::Controller(){
-
+Controller::Controller(const sf::Vector2f& currPos): currPos(currPos){
+    moving[(int)RenderIdx::GoRight] = Controller(1,1,1,1,1,1)
 }
 
 void Controller::init(){
@@ -10,7 +10,7 @@ void Controller::init(){
 {
     gameIsStarted == false;
     //Tex::loadActor(1);
-    //Tex::loadPassive(1);
+    //Tex::loadPassive();
 }
 }
 void Controller::capControls(){
@@ -19,3 +19,6 @@ void Controller::capControls(){
 
 
 }
+
+
+

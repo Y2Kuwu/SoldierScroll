@@ -4,4 +4,7 @@
 
 int main(){
     
+    Tex tex;
+    View view;
+    //view.makeSprite();
 }
