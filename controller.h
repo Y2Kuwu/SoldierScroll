@@ -13,6 +13,9 @@ Controller(const sf::Vector2f& currPos): currPos(currPos){
 void init();
 void capControls();
 void timingBelt( float delta );
+void draw(sf:: RenderTarget& render);
+void dir (sf::Vector2f& dirXY);
+
 
 private:
     enum class RenderIdx{
@@ -20,16 +23,22 @@ private:
     GoLeft,
     Crouch,
     Crawl,
+
+    IdleRight,
+    IdleLeft,
+
     Count 
 
 };
 
 
 bool gameIsStarted;
+float spd; // if shift * 1.5;
 sf::Vector2f currPos;
-sf::Vector2f velocity;
+sf::Vector2f velocity = {0.f,0.f};
 sf::Sprite spr;
 View moving[int( RenderIdx::Count )];
+RenderIdx act = RenderIdx::IdleRight;
     //View class
 
   

@@ -18,10 +18,21 @@ void Controller::capControls(){
 
 }
 
-  void Controller::timingBelt( float delta )
-    {
-        currPos += velocity * delta;
-        moving[int (currView)].timingBelt( delta );
-        moving[int (currView)].makeSprite( spr );
+//   void Controller::timingBelt( float delta )
+//     {
+//         currPos += velocity * delta;
+//         moving[int (currView)].timingBelt( delta );
+//         moving[int (currView)].makeSprite( spr );
+//     }
+
+void Controller::dir(sf::Vector2f& dirXY){
+    if( dirXY.x > 0.0f && !sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
+        
     }
 
+    
+
+    
+    
+    }    
+    
