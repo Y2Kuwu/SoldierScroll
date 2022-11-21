@@ -55,7 +55,7 @@ class Tex {
         
             //set up for actor for now 
             //add additional later or link all
-    void makeSprite(sf::Sprite& actor , sf::Sprite& world, sf::Sprite& asset){
+    void makeSprite(sf::Sprite& actor){ //, sf::Sprite& world, sf::Sprite& asset){
         actor.setTexture( *actorTexture );
         actor.setTextureRect ( storeFrames[current] );
     }
