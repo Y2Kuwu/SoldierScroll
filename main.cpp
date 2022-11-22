@@ -4,6 +4,8 @@
 
 int main(){
     
+    Tex tex;
+
     sf::RenderWindow win( sf::VideoMode( 800,600 ),"SFML window" );
 
 	{
@@ -11,7 +13,7 @@ int main(){
 		Controller actorClone( { 100.0f,200.0f } );
 	}
 
-    Tex::ErasePrev();
+    tex.ErasePrev();
 
     Controller actor ({ 100.0f,100.0f });
 

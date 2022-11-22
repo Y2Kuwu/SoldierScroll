@@ -1,17 +1,17 @@
 #include "controller.h"
 #include "tex.h"
-
+#include "views.h"
 
 
 void Controller::init(){
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && gameIsStarted == true)
 {
-    gameIsStarted == false;
+    gameIsStarted = false;
     //Tex::loadActor(1);
     //Tex::loadPassive();
 }
 }
-float Controller::capControls(){
+void Controller::capControls(){
     sf::Vector2f dirXY = { 0.0f,0.0f };
     switch(evt.type == sf::Event::KeyPressed){
     case sf::Keyboard::Left: //|| sf::Keyboard::A:

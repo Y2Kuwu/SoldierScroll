@@ -1,7 +1,7 @@
 #include "tex.h"
 
 
-std::shared_ptr<sf::Texture> loadActor( const std::string& texName ){ 
+static std::shared_ptr<sf::Texture> loadActor( const std::string& texName ){ 
         const auto texFind = texConnect.find( texName );
         if( texFind != texConnect.end())
         {
@@ -15,7 +15,7 @@ std::shared_ptr<sf::Texture> loadActor( const std::string& texName ){
             return actorTexture;
         }
     }
-std::shared_ptr<sf::Texture> loadPassive( const std::string& background )
+static std::shared_ptr<sf::Texture> loadPassive( const std::string& background )
     { 
         const auto texFind = worldConnect.find( background );
         if( texFind != worldConnect.end())
@@ -31,7 +31,7 @@ std::shared_ptr<sf::Texture> loadPassive( const std::string& background )
         }
     }
 
-std::shared_ptr<sf::Texture> loadAsset( const std::string& asset )
+static std::shared_ptr<sf::Texture> loadAsset( const std::string& asset )
     { 
         const auto texFind = assetConnect.find( asset );
         if( texFind != assetConnect.end())

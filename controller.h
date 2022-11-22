@@ -1,25 +1,27 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
-#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
+#include "tex.h"
+#include "views.h"
 class Controller
 {
 public:
-
+//Controller() = default;
 Controller(const sf::Vector2f& currPos): currPos(currPos){
-    moving[(int)RenderIdx::GoRight] = View(64,192,64,64,8,0.1f);
-    moving[(int)RenderIdx::GoLeft] = View(64,64,64,64,8,0.1f);
-    moving[(int)RenderIdx::Crouch] = View();
-    moving[(int)RenderIdx::Crawl] = View();
+    moving[(int)RenderIdx::GoRight] = Views(64,192,64,64,8,0.1f);
+    moving[(int)RenderIdx::GoLeft] = Views(64,64,64,64,8,0.1f);
+   // moving[(int)RenderIdx::Crouch] = View();
+   // moving[(int)RenderIdx::Crawl] = View();
 
-    moving[(int)RenderIdx::IdleRight] = View(0,192,64,64,1,10.1f);
-    moving[(int)RenderIdx::IdleLeft] = View(0,64,64,64,1,10.1f);
+    moving[(int)RenderIdx::IdleRight] = Views(0,192,64,64,1,10.1f);
+    moving[(int)RenderIdx::IdleLeft] = Views(0,64,64,64,1,10.1f);
                                         //view class
 };
 
 void init();
-float capControls();
+void capControls();
 void timingBelt( float delta );
-void draw(sf:: RenderTarget& render);
+void draw(sf::RenderTarget& render);
 void dir (sf::Vector2f& dirXY);
 
 
@@ -43,7 +45,7 @@ float spd; // if shift * 1.5;
 sf::Vector2f currPos;
 sf::Vector2f velocity = {0.f,0.f};
 sf::Sprite spr;
-View moving[int( RenderIdx::Count )];
+Views moving[int( RenderIdx::Count )];
 RenderIdx act = RenderIdx::IdleRight;
 sf::Event evt;
     //View class
