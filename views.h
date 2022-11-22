@@ -1,25 +1,28 @@
 #ifndef VIEWS_H
 #define VIEWS_H
-#include "controller.h"
+#include "tex.h"
+#include <vector>
 
 
  class Views
     {
         
         public:
-        Views() = default;
-
+        
+       Views() = default;
         Views(int posX , int posY , int totHeight, int totWidth, int currView, float wait)
          :
         wait(wait)
         {
-         
-
+        storeFrames.reserve(currView);
+        actorTexture = Tex::loadActor("actor.png");
         //  actorTexture = Tex::loadActor("actor.png");
         //  worldTexute = Tex::loadPassive("world.png");
         //  assetTexture = Tex::loadAsset("asset.png");
-         for(int s = 0; s < storeFrames.size(); s++){
-             storeFrames.insert(storeFrames.end(), { sf::Vector2i{ posX,posY },sf::Vector2i{ totWidth,totHeight } } );
+        
+         for(int s = 0; s < currView; s++)
+         {
+             storeFrames.emplace_back( sf::Vector2i{ posX,posY },sf::Vector2i{ totWidth,totHeight });
              posX += totWidth;
          }
         }
@@ -28,7 +31,7 @@
         
             //set up for actor for now 
             //add additional later or link all
-    void makeSprite(sf::Sprite& actor){ //, sf::Sprite& world, sf::Sprite& asset){
+    void makeSprite(sf::Sprite& actor) const { //, sf::Sprite& world, sf::Sprite& asset){
         actor.setTexture( *actorTexture );
         actor.setTextureRect ( storeFrames[current] );
     }
@@ -45,17 +48,17 @@
 
     private:
         void Next(){
-            if(++current >= storeFrames.size())
+            if(++current >= int (storeFrames.size()))
             {
                 current = 0;
             }
         }
-
+  
 
         std::vector<sf::IntRect> storeFrames;
         //
-        std::shared_ptr<sf::Texture> worldTexute;
-        std::shared_ptr<sf::Texture> assetTexture;
+        //std::shared_ptr<sf::Texture> worldTexute;
+       //std::shared_ptr<sf::Texture> assetTexture;
         std::shared_ptr<sf::Texture> actorTexture;
         //
         int current = 0;
@@ -63,5 +66,4 @@
         float time = 0.0f; // compared to wait in ms
 
     };
-
-    #endif
+#endif 
