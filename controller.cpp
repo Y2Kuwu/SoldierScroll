@@ -16,10 +16,45 @@ float Controller::capControls(){
     switch(evt.type == sf::Event::KeyPressed){
     case sf::Keyboard::Left: //|| sf::Keyboard::A:
         dirXY.x -= 1.0f;
+        spd = 50.0f;
         dir(dirXY);
     break;
     case sf::Keyboard::Right: //|| sf::Keyboard::D:
         dirXY.x += 1.0f;
+        spd = 50.0f;
+        dir(dirXY);
+    break;
+
+    case sf::Keyboard::A: //|| sf::Keyboard::A:
+        dirXY.x -= 1.0f;
+        spd = 50.0f;
+        dir(dirXY);
+    break;
+    case sf::Keyboard::D: //|| sf::Keyboard::D:
+        dirXY.x += 1.0f;
+        spd = 50.0f;
+        dir(dirXY);
+    break;
+
+    case sf::Keyboard::Left + sf::Keyboard::RShift: //|| sf::Keyboard::A:
+        dirXY.x -= 1.0f;
+        spd = 50.0f;
+        dir(dirXY);
+    break;
+    case sf::Keyboard::Right + sf::Keyboard::RShift: //|| sf::Keyboard::D:
+        dirXY.x += 1.0f;
+        spd = 50.0f;
+        dir(dirXY);
+    break;
+
+    case sf::Keyboard::A + sf::Keyboard::RShift: //|| sf::Keyboard::A:
+        dirXY.x -= 1.0f;
+        spd = 50.0f;
+        dir(dirXY);
+    break;
+    case sf::Keyboard::D + sf::Keyboard::RShift: //|| sf::Keyboard::D:
+        dirXY.x += 1.0f;
+        spd = 50.0f;
         dir(dirXY);
     break;
 
