@@ -6,7 +6,13 @@ class Controller
 public:
 
 Controller(const sf::Vector2f& currPos): currPos(currPos){
-    moving[(int)RenderIdx::GoRight] = View(1,1,1,1,1,1);
+    moving[(int)RenderIdx::GoRight] = View(64,192,64,64,8,0.1f);
+    moving[(int)RenderIdx::GoLeft] = View(64,64,64,64,8,0.1f);
+    moving[(int)RenderIdx::Crouch] = View();
+    moving[(int)RenderIdx::Crawl] = View();
+
+    moving[(int)RenderIdx::IdleRight] = View(0,192,64,64,1,10.1f);
+    moving[(int)RenderIdx::IdleLeft] = View(0,64,64,64,1,10.1f);
                                         //view class
 };
 
