@@ -38,23 +38,23 @@ float Controller::capControls(){
 
     case sf::Keyboard::Left + sf::Keyboard::RShift: //|| sf::Keyboard::A:
         dirXY.x -= 1.0f;
-        spd = 50.0f;
+        spd = 75.0f;
         dir(dirXY);
     break;
     case sf::Keyboard::Right + sf::Keyboard::RShift: //|| sf::Keyboard::D:
         dirXY.x += 1.0f;
-        spd = 50.0f;
+        spd = 75.0f;
         dir(dirXY);
     break;
 
     case sf::Keyboard::A + sf::Keyboard::RShift: //|| sf::Keyboard::A:
         dirXY.x -= 1.0f;
-        spd = 50.0f;
+        spd = 75.0f;
         dir(dirXY);
     break;
     case sf::Keyboard::D + sf::Keyboard::RShift: //|| sf::Keyboard::D:
         dirXY.x += 1.0f;
-        spd = 50.0f;
+        spd = 75.0f;
         dir(dirXY);
     break;
 
@@ -73,22 +73,22 @@ float Controller::capControls(){
 
 
 void Controller::dir(sf::Vector2f& dirXY){
-    if( dirXY.x > 0.0f && !sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
-        spd = 50.0f;
+    if( dirXY.x > 0.0f ){// && !sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
+        //spd = 50.0f;
         act = RenderIdx::GoRight;
     }
-    else if( dirXY.x < 0.0f && !sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
-        spd = 50.0f;
+    else if( dirXY.x < 0.0f ){// && !sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
+       // spd = 50.0f;
         act = RenderIdx::GoLeft;
     }
-    else if( dirXY.x > 0.0f && sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
-        spd = 75.0f;
-        act = RenderIdx::GoRight;
-    }
-    else if( dirXY.x < 0.0f && sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
-        spd = 75.0f;
-        act = RenderIdx::GoLeft;
-    }
+    // else if( dirXY.x > 0.0f && sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
+    //     spd = 75.0f;
+    //     act = RenderIdx::GoRight;
+    // }
+    // else if( dirXY.x < 0.0f && sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
+    //     spd = 75.0f;
+    //     act = RenderIdx::GoLeft;
+    // }
     //add up or jump?
     else{
         if (velocity.x > 0.0f){
