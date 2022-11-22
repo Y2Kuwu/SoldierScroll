@@ -11,12 +11,29 @@ void Controller::init(){
     //Tex::loadPassive();
 }
 }
-void Controller::capControls(){
+float Controller::capControls(){
+    sf::Vector2f dirXY = { 0.0f,0.0f };
+    switch(evt.type == sf::Event::KeyPressed){
+    case sf::Keyboard::Left: //|| sf::Keyboard::A:
+        dirXY.x -= 1.0f;
+        dir(dirXY);
+    break;
+    case sf::Keyboard::Right: //|| sf::Keyboard::D:
+        dirXY.x += 1.0f;
+        dir(dirXY);
+    break;
 
+    // case sf::Keyboard::RShift && sf::Keyboard::A || sf::Keyboard::Left:
+    //     dirXY.x -= 1.0f;
+    //     dir(dirXY);
+    // break;
+    // case sf::Keyboard::RShift && sf::Keyboard::D || sf::Keyboard::Right:
+    //     dirXY.x += 1.0f;
+    //     dir(dirXY);
+    // break;
+    }
+    }
 
-
-
-}
 
 
 
@@ -61,5 +78,5 @@ void Controller::dir(sf::Vector2f& dirXY){
 
     
     
-    }    
+    
     
