@@ -361,80 +361,137 @@ public:
 	void SetDirection( const sf::Vector2f& dir )
 	{
         
-        bool headingRight = dir.x > 0.0f;
-        bool headingLeft = dir.x < 0.0f;
-        bool headingUp = dir.y < 0.0f;
-        bool headingDown = dir.y > 0.0f;
-        bool idlRight = velocity.x > 0.0f;
-        bool idlLeft = velocity.x < 0.0f;
-        bool idlUp = velocity.y < 0.0f;
-        bool idlDown = velocity.y > 0.0f;
-        std::vector<bool> velDir = 
-        {headingDown,headingUp,headingLeft,headingRight,idlDown,idlUp,idlLeft,idlRight};
-        std::vector<bool>::iterator;
+        int headingRight = dir.x > 0.0f;
+        int headingLeft = dir.x < 0.0f;
+        int headingUp = dir.y < 0.0f;
+        int headingDown = dir.y > 0.0f;
+        int idlRight = velocity.x > 0.0f;
+        int idlLeft = velocity.x < 0.0f;
+        int idlUp = velocity.y < 0.0f;
+        int idlDown = velocity.y > 0.0f;
+        velocity = dir * speed;
+         
+        //std::vector<bool> velDir = 
+        //{headingDown,headingUp,headingLeft,headingRight,idlDown,idlUp,idlLeft,idlRight};
+        //int velDir[]= {headingDown,headingUp,headingLeft,headingRight,idlDown,idlUp,idlLeft,idlRight};
 
+        //std::vector<bool>::iterator vd;
+        //for (vd = velDir.begin() ; vd != velDir.end(); ++vd)
         //include proneValue , gunValue , autoValue
         //        1,2,3
-        switch ()
+        int idx;
+        switch (idx)
         {
-        case :
-    
+        case 0:
+            idx = headingDown;
+            currView = RenderIdx::GoDown;
+            std::cout << idx;
         break;
+
+        case 1:
+            idx = headingUp;
+            currView = RenderIdx::GoUp;
+            std::cout << idx;
+        break;
+
+        case 2:
+            idx = headingLeft;
+            currView = RenderIdx::GoLeft;
+            std::cout << idx;
+        break;
+
+        case 3:
+            idx = headingRight;
+            currView = RenderIdx::GoRight;
+            std::cout << idx;
+        break;
+
+        case 4:
+            idx = 4;
+            currView = RenderIdx::IdleDown;
+            std::cout << idx;
+        break;
+
+        case 5:
+            idx = 5;
+            currView = RenderIdx::IdleUp;
+            std::cout << idx;
+        break;
+
+        case 6:
+            idx = 6;
+            currView = RenderIdx::IdleLeft;
+            std::cout << idx;
+        break;
+
+        case 7:
+            idx = 7;
+            currView = RenderIdx::IdleRight;
+            std::cout << idx;
+        break;
+
+        // case 8:
+        //     //idx = 8;
+        //     //std::cout << idx;
+        // break;
 
         default:
         break;
- }
 
-		if( dir.x > 0.0f ) //check for gunValue and proneValue
-		{
-			currView = RenderIdx::GoRight;
+       
+ }
+    }
+
+	// 	if( dir.x > 0.0f ) //check for gunValue and proneValue
+	// 	{
+	// 		currView = RenderIdx::GoRight;
            
           
-		}
-		else if( dir.x < 0.0f )
-		{
+	// 	}
+	// 	else if( dir.x < 0.0f )
+	// 	{
           
-			currView = RenderIdx::GoLeft;
-             //std::cout << headingRight; reading False 
+	// 		currView = RenderIdx::GoLeft;
+    //          //std::cout << headingRight; reading False 
             
-		}
-		else if( dir.y < 0.0f )
-		{
+	// 	}
+	// 	else if( dir.y < 0.0f )
+	// 	{
           
-			currView = RenderIdx::GoUp;
+	// 		currView = RenderIdx::GoUp;
             
-		}
-		else if( dir.y > 0.0f )
-		{
+	// 	}
+	// 	else if( dir.y > 0.0f )
+	// 	{
          
-			currView = RenderIdx::GoDown;
+	// 		currView = RenderIdx::GoDown;
             
-		}
-    //
+	// 	}
+    // //
      
-        //
-		else
-		{
-			if( velocity.x > 0.0f )
-			{
-				currView = RenderIdx::IdleRight;
-			}
-			else if( velocity.x < 0.0f )
-			{
-				currView = RenderIdx::IdleLeft;
-			}
-			else if( velocity.y < 0.0f )
-			{
-				currView = RenderIdx::IdleUp;
-			}
-			else if( velocity.y > 0.0f )
-			{
-				currView = RenderIdx::IdleDown;
-			}
+    //     //
+	// 	else
+	// 	{
+	// 		if( velocity.x > 0.0f )
+	// 		{
+	// 			currView = RenderIdx::IdleRight;
+	// 		}
+	// 		else if( velocity.x < 0.0f )
+	// 		{
+	// 			currView = RenderIdx::IdleLeft;
+	// 		}
+	// 		else if( velocity.y < 0.0f )
+	// 		{
+	// 			currView = RenderIdx::IdleUp;
+	// 		}
+	// 		else if( velocity.y > 0.0f )
+	// 		{
+	// 			currView = RenderIdx::IdleDown;
+	// 		}
             
-		}
-		velocity = dir * speed;
-	}
+	// 	}
+	// 	velocity = dir * speed;
+	// }
     
     
    
