@@ -347,11 +347,9 @@ public:
             if(down == 1){
                 //set to crouch
                 down = proneValue;
-                std::cout<<"fart" ;
             }
             if(down == 2){
                 //set to crawl
-                std::cout<<"two";
                 down = proneValue;
             }
             else if(down == 3){
@@ -362,26 +360,30 @@ public:
         //make into switch cases?
 	void SetDirection( const sf::Vector2f& dir )
 	{
-        // bool headingRight = dir.x > 0.0f;
-        // bool headingLeft = dir.x < 0.0f;
-        // bool headingUp = dir.y < 0.0f;
-        // bool headingDown = dir.y > 0.0f;
-        // bool idlRight = velocity.x > 0.0f;
-        // bool idlLeft = velocity.x < 0.0f;
-        // bool idlUp = velocity.y < 0.0f;
-        // bool idlDown = velocity.y > 0.0f;
+        
+        bool headingRight = dir.x > 0.0f;
+        bool headingLeft = dir.x < 0.0f;
+        bool headingUp = dir.y < 0.0f;
+        bool headingDown = dir.y > 0.0f;
+        bool idlRight = velocity.x > 0.0f;
+        bool idlLeft = velocity.x < 0.0f;
+        bool idlUp = velocity.y < 0.0f;
+        bool idlDown = velocity.y > 0.0f;
+        std::vector<bool> velDir = 
+        {headingDown,headingUp,headingLeft,headingRight,idlDown,idlUp,idlLeft,idlRight};
+        std::vector<bool>::iterator;
 
         //include proneValue , gunValue , autoValue
         //        1,2,3
-        // switch (dir)
-        // {
-        // case :
+        switch ()
+        {
+        case :
     
-        // break;
+        break;
 
-        // default:
-        // break;
-// }
+        default:
+        break;
+ }
 
 		if( dir.x > 0.0f ) //check for gunValue and proneValue
 		{
