@@ -52,6 +52,7 @@ public:
 		}
 		else
 		{
+            View gunValue;
 			auto bgPtrToTex = std::make_shared<sf::Texture>();
 			bgPtrToTex->loadFromFile( bgName );
 			assetPtr.insert( { bgName,bgPtrToTex } );
@@ -207,7 +208,7 @@ private:
 		Count
 	};
 public:
-    float speed = 75.0f;
+    float speed = 115.0f;
 	Char( const sf::Vector2f& currPos )
 		:
 		currPos( currPos )
@@ -258,7 +259,7 @@ public:
                 //asset/weapon animations
                 //note:: maybe try mirroring sprite instead of drawing left and right 
                 //sprite.setScale({-1,1});
-                //**PISTOL** // button #1 toggle or make default?
+                //**PISTOL** // button #1 make default?
         // views[(int)RenderIdx::PistolFireUp] = View( 192,0,64,64,6,0.1f );
 		// views[(int)RenderIdx::PistolFireRight] = View( 192,64,64,64,6,0.1f );
 		// views[(int)RenderIdx::PistolFireDown] = View( 192,128,64,64,6,0.1f );
@@ -279,7 +280,11 @@ public:
         // views[(int)RenderIdx::RifleFireUp] = View( 192,192,64,64,6,0.1f );
 		// views[(int)RenderIdx::RifleFireRight] = View( 192,256,64,64,6,0.1f );
 		// views[(int)RenderIdx::RifleFireDown] = View( 192,320,64,64,6,0.1f );
-
+                //auto //       //make sure to end animations if not fired to corresponding idle animations
+        // views[(int)RenderIdx::AutoRifleFireUp] = View( 192,384,64,64,9,0.1f );
+		// views[(int)RenderIdx::AutoRifleFireRight] = View( 192,448,64,64,9,0.1f );
+		// views[(int)RenderIdx::AutoRifleFireDown] = View( 192,512,64,64,9,0.1f );
+                //
         // views[(int)RenderIdx::RifleIdleUp] = View( 0,192,64,64,1,10.0f );
 		// views[(int)RenderIdx::RifleIdleRight] = View( 0,256,64,64,1,10.0f );
 		// views[(int)RenderIdx::RifleIdleDown] = View( 0,320,64,64,1,10.0f );
@@ -316,27 +321,51 @@ public:
 
 
 
-
-
-		
-        
-
-
-
-
 	}
 	void Draw( sf::RenderTarget& rt ) const
 	{
 		rt.draw( sprite );
 	}
-    
-   
+        //check which gun is called
+    void CheckWeapon(int gun)
+    {
+        gun = gunValue;
+    }
 
+        //check toggle for auto
+    void CheckToggle(int clicked)
+    {
+        for(int clicked = 0; clicked < 2; clicked++){
+            if(clicked %2 == 0){
+                //set to auto
+            }
+        }
+    }
+
+    void Stealth(int down)
+    {
+        for(int down = 0; down < 3; down++){
+            if(down = 1){
+                //set to crouch
+                down = proneValue;
+            }
+            if(down = 2){
+                //set to crawl
+                down = proneValue;
+            }
+            else if(down = 3){
+                //set to stand
+                down = proneValue;
+            }
+            
+        }
+    
+    }
+        //make into switch cases?
 	void SetDirection( const sf::Vector2f& dir )
 	{
-		if( dir.x > 0.0f )
+		if( dir.x > 0.0f ) //check for gunValue and proneValue
 		{
-            
 			currView = RenderIdx::GoRight;
           
 		}
@@ -344,16 +373,19 @@ public:
 		{
           
 			currView = RenderIdx::GoLeft;
+            
 		}
 		else if( dir.y < 0.0f )
 		{
           
 			currView = RenderIdx::GoUp;
+            
 		}
 		else if( dir.y > 0.0f )
 		{
          
 			currView = RenderIdx::GoDown;
+            
 		}
     //
      
@@ -363,18 +395,22 @@ public:
 			if( velocity.x > 0.0f )
 			{
 				currView = RenderIdx::IdleRight;
+                
 			}
 			else if( velocity.x < 0.0f )
 			{
 				currView = RenderIdx::IdleLeft;
+              
 			}
 			else if( velocity.y < 0.0f )
 			{
 				currView = RenderIdx::IdleUp;
+               
 			}
 			else if( velocity.y > 0.0f )
 			{
 				currView = RenderIdx::IdleDown;
+                
 			}
             
 		}
@@ -393,7 +429,11 @@ public:
 	}
 private:
 	
-    
+    // acting as bool // change animation cycles
+    int gunValue;
+    int proneValue;
+    int autoValue;
+    //
 
 	sf::Vector2f currPos;
 	sf::Vector2f velocity = {0.0f,0.0f};
@@ -440,15 +480,32 @@ int main()
 			tp = new_tp;
 		}
 
-
-		// handle input
+       
+		// make into switch cases?
 		sf::Vector2f dir = { 0.0f,0.0f };
-         if (sf::Keyboard::isKeyPressed( sf::Keyboard::LControl) ){
+        int autoCheck = 0;
+        int prone = 0;
+        if (sf::Keyboard::isKeyPressed( sf::Keyboard::LControl) ){
             soldier.speed = 0.0f;
+                //aim
         }
-
+        if (sf::Keyboard::isKeyPressed( sf::Keyboard::Space) ){
+            //soldier.speed = 0.0f;
+                //fire animations
+        }
         if (sf::Keyboard::isKeyPressed( sf::Keyboard::LShift) ){
             soldier.speed = 200.0f;
+                //run
+        }
+        if (sf::Keyboard::isKeyPressed( sf::Keyboard::C) ){
+            soldier.Stealth(prone);
+            soldier.speed = 100.0f;
+                //crouch
+        }
+        if (sf::Keyboard::isKeyPressed( sf::Keyboard::C) ){
+            soldier.Stealth(prone);
+            soldier.speed = 75.0f;
+                //crawl
         }
 		if( sf::Keyboard::isKeyPressed( sf::Keyboard::Up ) )
 		{
@@ -481,6 +538,23 @@ int main()
 		if( sf::Keyboard::isKeyPressed( sf::Keyboard::D ) )
 		{
 			dir.x += 1.0f;
+		}
+        // NUM check weapon
+        if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num1) )
+		{
+            soldier.CheckWeapon(1);
+            
+		}
+
+        if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num2) )
+		{
+			soldier.CheckWeapon(2);
+            soldier.CheckToggle(autoCheck);
+		}
+
+        if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num3) )
+		{
+			soldier.CheckWeapon(3);
 		}
         
 		
