@@ -52,7 +52,6 @@ public:
 		}
 		else
 		{
-            View gunValue;
 			auto bgPtrToTex = std::make_shared<sf::Texture>();
 			bgPtrToTex->loadFromFile( bgName );
 			assetPtr.insert( { bgName,bgPtrToTex } );
@@ -332,8 +331,8 @@ public:
         gun = gunValue;
     }
 
-        //check toggle for auto
-    void CheckToggle(int clicked)
+        //check toggle for auto fire
+    void CheckIfAuto(int clicked)
     {
         for(int clicked = 0; clicked < 2; clicked++){
             if(clicked %2 == 0){
@@ -344,35 +343,57 @@ public:
 
     void Stealth(int down)
     {
-        for(int down = 0; down < 3; down++){
-            if(down = 1){
+        
+            if(down == 1){
                 //set to crouch
                 down = proneValue;
+                std::cout<<"fart" ;
             }
-            if(down = 2){
+            if(down == 2){
                 //set to crawl
+                std::cout<<"two";
                 down = proneValue;
             }
-            else if(down = 3){
+            else if(down == 3){
                 //set to stand
                 down = proneValue;
             }
-            
-        }
-    
     }
         //make into switch cases?
 	void SetDirection( const sf::Vector2f& dir )
 	{
+        // bool headingRight = dir.x > 0.0f;
+        // bool headingLeft = dir.x < 0.0f;
+        // bool headingUp = dir.y < 0.0f;
+        // bool headingDown = dir.y > 0.0f;
+        // bool idlRight = velocity.x > 0.0f;
+        // bool idlLeft = velocity.x < 0.0f;
+        // bool idlUp = velocity.y < 0.0f;
+        // bool idlDown = velocity.y > 0.0f;
+
+        //include proneValue , gunValue , autoValue
+        //        1,2,3
+        // switch (dir)
+        // {
+        // case :
+    
+        // break;
+
+        // default:
+        // break;
+// }
+
 		if( dir.x > 0.0f ) //check for gunValue and proneValue
 		{
 			currView = RenderIdx::GoRight;
+           
           
 		}
 		else if( dir.x < 0.0f )
 		{
           
 			currView = RenderIdx::GoLeft;
+             //std::cout << headingRight; reading False 
             
 		}
 		else if( dir.y < 0.0f )
@@ -395,22 +416,18 @@ public:
 			if( velocity.x > 0.0f )
 			{
 				currView = RenderIdx::IdleRight;
-                
 			}
 			else if( velocity.x < 0.0f )
 			{
 				currView = RenderIdx::IdleLeft;
-              
 			}
 			else if( velocity.y < 0.0f )
 			{
 				currView = RenderIdx::IdleUp;
-               
 			}
 			else if( velocity.y > 0.0f )
 			{
 				currView = RenderIdx::IdleDown;
-                
 			}
             
 		}
@@ -498,15 +515,22 @@ int main()
                 //run
         }
         if (sf::Keyboard::isKeyPressed( sf::Keyboard::C) ){
-            soldier.Stealth(prone);
-            soldier.speed = 100.0f;
-                //crouch
+            //
+                prone +=1;
+                if (prone == 1)
+                {
+                    soldier.Stealth(prone);
+                    std::cout<<prone;
+                }
+           // soldier.speed = 100.0f;
+           
+               //crouch
         }
-        if (sf::Keyboard::isKeyPressed( sf::Keyboard::C) ){
-            soldier.Stealth(prone);
-            soldier.speed = 75.0f;
+       // if (sf::Keyboard::isKeyPressed( sf::Keyboard::C) ){
+           // soldier.Stealth(prone);
+           // soldier.speed = 75.0f;
                 //crawl
-        }
+       // }
 		if( sf::Keyboard::isKeyPressed( sf::Keyboard::Up ) )
 		{
 			dir.y -= 1.0f;
@@ -549,7 +573,7 @@ int main()
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num2) )
 		{
 			soldier.CheckWeapon(2);
-            soldier.CheckToggle(autoCheck);
+            soldier.CheckIfAuto(autoCheck);
 		}
 
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num3) )
