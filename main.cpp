@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 
+
 class Tex
 {
 public:
@@ -180,20 +181,20 @@ private:
         //AimLeft,
         //AimRight,
 
-        //CrouchUp,
-        //CrouchDown,
-        //CrouchLeft,
-        //CrouchRight,
+        CrouchUp,
+        CrouchDown,
+        CrouchLeft,
+        CrouchRight,
 
         //CrawlUp,
         //CrawlDown,
         //CrawlLeft,
         //CrawlRight,
 
-        //IdleCrouchUp,
-		//IdleCrouchDown,
-		//IdleCrouchLeft,
-		//IdleCrouchRight,
+        IdleCrouchUp,
+		IdleCrouchDown,
+		IdleCrouchLeft,
+		IdleCrouchRight,
 
         //IdleCrawlUp,
 		//IdleCrawlDown,
@@ -207,6 +208,8 @@ private:
 		Count
 	};
 public:
+	bool crouch = false;
+	int gunValue;
     float speed = 115.0f;
 	Char( const sf::Vector2f& currPos )
 		:
@@ -231,10 +234,10 @@ public:
 		// views[(int)RenderIdx::AimDown] = View( 128,256,64,64,1,10.1f );
 		// views[(int)RenderIdx::AimRight] = View( 192,256,64,64,1,10.1f );
 
-        // views[(int)RenderIdx::IdleCrouchUp] = View( 0,320,64,64,1,10.1f );
-		// views[(int)RenderIdx::IdleCrouchLeft] = View( 0,384,64,64,1,10.1f );
-		// views[(int)RenderIdx::IdleCrouchDown] = View( 0,448,64,64,1,10.1f );
-		// views[(int)RenderIdx::IdleCrouchRight] = View( 0,512,64,64,1,10.1f );
+        views[(int)RenderIdx::IdleCrouchUp] = View( 0,320,64,64,1,10.1f );
+		views[(int)RenderIdx::IdleCrouchLeft] = View( 0,384,64,64,1,10.1f );
+		views[(int)RenderIdx::IdleCrouchDown] = View( 0,448,64,64,1,10.1f );
+		views[(int)RenderIdx::IdleCrouchRight] = View( 0,512,64,64,1,10.1f );
 
         // views[(int)RenderIdx::IdleCrawlUp] = View( 0,576,64,64,1,10.1f );
 		// views[(int)RenderIdx::IdleCrawlLeft] = View( 0,640,64,64,1,10.1f );
@@ -243,10 +246,10 @@ public:
             //
 
             //crawl crouch
-        // views[(int)RenderIdx::CrouchUp] = View( 64,320,64,64,8,0.1f );
-		// views[(int)RenderIdx::CrouchLeft] = View( 64,384,64,64,8,0.1f );
-		// views[(int)RenderIdx::CrouchDown] = View( 64,448,64,64,8,0.1f );
-		// views[(int)RenderIdx::CrouchRight] = View( 64,512,64,64,8,0.1f );
+        views[(int)RenderIdx::CrouchUp] = View( 64,320,64,64,8,0.1f );
+		views[(int)RenderIdx::CrouchLeft] = View( 64,384,64,64,8,0.1f );
+		views[(int)RenderIdx::CrouchDown] = View( 64,448,64,64,8,0.1f );
+		views[(int)RenderIdx::CrouchRight] = View( 64,512,64,64,8,0.1f );
 
         // views[(int)RenderIdx::CrouchUp] = View( 64,576,64,64,8,0.1f );
 		// views[(int)RenderIdx::CrouchLeft] = View( 64,640,64,64,8,0.1f );
@@ -328,7 +331,8 @@ public:
         //check which gun is called
     void CheckWeapon(int gun)
     {
-        gun = gunValue;
+		gunValue = gun; //gunvalue is reading accurately
+		std::cout << gunValue;
     }
 
         //check toggle for auto fire
@@ -341,35 +345,32 @@ public:
         }
     }
 
-    void Stealth(int down)
-    {
-        
-            if(down == 1){
-                //set to crouch
-                down = proneValue;
-            }
-            if(down == 2){
-                //set to crawl
-                down = proneValue;
-            }
-            else if(down == 3){
-                //set to stand
-                down = proneValue;
-            }
-    }
-        //make into switch cases?
+    
+
+    // void SortEnum(  ){
+    //     for (int enumIdx = )
+    // }
+
+
 	void SetDirection( const sf::Vector2f& dir )
 	{
-        
-        int headingRight = dir.x > 0.0f;
-        int headingLeft = dir.x < 0.0f;
-        int headingUp = dir.y < 0.0f;
-        int headingDown = dir.y > 0.0f;
-        int idlRight = velocity.x > 0.0f;
-        int idlLeft = velocity.x < 0.0f;
-        int idlUp = velocity.y < 0.0f;
-        int idlDown = velocity.y > 0.0f;
-        velocity = dir * speed;
+        // for (auto enumI =  RenderIdx::GoUp; enumI != RenderIdx::Count;)
+        // {   
+        //     // if(enumI == RenderIdx::GoDown){
+        //     //     std::cout<< "f";
+        //     // }
+        // }
+
+            //for switch statement
+        // bool headingRight = dir.x > 0.0f;
+        // bool headingLeft = dir.x < 0.0f;
+        // bool headingUp = dir.y < 0.0f;
+        // bool headingDown = dir.y > 0.0f;
+        // bool idlRight = velocity.x > 0.0f;
+        // bool idlLeft = velocity.x < 0.0f;
+        // bool idlUp = velocity.y < 0.0f;
+        // bool idlDown = velocity.y > 0.0f;
+       
          
         //std::vector<bool> velDir = 
         //{headingDown,headingUp,headingLeft,headingRight,idlDown,idlUp,idlLeft,idlRight};
@@ -379,119 +380,95 @@ public:
         //for (vd = velDir.begin() ; vd != velDir.end(); ++vd)
         //include proneValue , gunValue , autoValue
         //        1,2,3
-        int idx;
-        switch (idx)
-        {
-        case 0:
-            idx = headingDown;
-            currView = RenderIdx::GoDown;
-            std::cout << idx;
-        break;
 
-        case 1:
-            idx = headingUp;
-            currView = RenderIdx::GoUp;
-            std::cout << idx;
-        break;
+            //note find enum string value eg:: if includes:: "Pistol" , "Rifle".. or by num
+        
+        std::string pistolSort = "Pistol";
+        std::string rifleSort = "Rifle";
+        std::string shotSort = "Shotgun";
+        
 
-        case 2:
-            idx = headingLeft;
-            currView = RenderIdx::GoLeft;
-            std::cout << idx;
-        break;
-
-        case 3:
-            idx = headingRight;
-            currView = RenderIdx::GoRight;
-            std::cout << idx;
-        break;
-
-        case 4:
-            idx = 4;
-            currView = RenderIdx::IdleDown;
-            std::cout << idx;
-        break;
-
-        case 5:
-            idx = 5;
-            currView = RenderIdx::IdleUp;
-            std::cout << idx;
-        break;
-
-        case 6:
-            idx = 6;
-            currView = RenderIdx::IdleLeft;
-            std::cout << idx;
-        break;
-
-        case 7:
-            idx = 7;
-            currView = RenderIdx::IdleRight;
-            std::cout << idx;
-        break;
-
-        // case 8:
-        //     //idx = 8;
-        //     //std::cout << idx;
-        // break;
-
-        default:
-        break;
-
-       
- }
-    }
-
-	// 	if( dir.x > 0.0f ) //check for gunValue and proneValue
-	// 	{
-	// 		currView = RenderIdx::GoRight;
-           
-          
-	// 	}
-	// 	else if( dir.x < 0.0f )
-	// 	{
-          
-	// 		currView = RenderIdx::GoLeft;
-    //          //std::cout << headingRight; reading False 
+		if( dir.x > 0.0f ) //check for gunValue and proneValue
+		{
+			currView = RenderIdx::GoRight;
+		}
+		else if( dir.x < 0.0f )
+		{
+			currView = RenderIdx::GoLeft;
+             //std::cout << headingRight; reading False 
+		}
+		else if( dir.y < 0.0f )
+		{
+			currView = RenderIdx::GoUp;
+		}
+		else if( dir.y > 0.0f )
+		{
+			currView = RenderIdx::GoDown;
+		}
+		//crouching animations
+		else{
+		if( dir.x > 0.0f && crouch == true)
+		{
+			currView = RenderIdx::CrouchRight;
             
-	// 	}
-	// 	else if( dir.y < 0.0f )
-	// 	{
-          
-	// 		currView = RenderIdx::GoUp;
-            
-	// 	}
-	// 	else if( dir.y > 0.0f )
-	// 	{
-         
-	// 		currView = RenderIdx::GoDown;
-            
-	// 	}
-    // //
+		}
+		else if( dir.x < 0.0f && crouch == true)
+		{
+			currView = RenderIdx::CrouchLeft;
+		}
+		else if( dir.y < 0.0f  && crouch == true)
+		{
+			currView = RenderIdx::CrouchUp;
+		}
+		else if( dir.y > 0.0f  && crouch == true)
+		{
+			currView = RenderIdx::CrouchDown;
+		}
+		
+    //
      
-    //     //
-	// 	else
-	// 	{
-	// 		if( velocity.x > 0.0f )
-	// 		{
-	// 			currView = RenderIdx::IdleRight;
-	// 		}
-	// 		else if( velocity.x < 0.0f )
-	// 		{
-	// 			currView = RenderIdx::IdleLeft;
-	// 		}
-	// 		else if( velocity.y < 0.0f )
-	// 		{
-	// 			currView = RenderIdx::IdleUp;
-	// 		}
-	// 		else if( velocity.y > 0.0f )
-	// 		{
-	// 			currView = RenderIdx::IdleDown;
-	// 		}
-            
-	// 	}
-	// 	velocity = dir * speed;
-	// }
+        //
+		else
+		{
+			if( velocity.x > 0.0f )
+			{
+				currView = RenderIdx::IdleRight;
+			}
+			else if( velocity.x < 0.0f )
+			{
+				currView = RenderIdx::IdleLeft;
+			}
+			else if( velocity.y < 0.0f )
+			{
+				currView = RenderIdx::IdleUp;
+			}
+			else if( velocity.y > 0.0f )
+			{
+				currView = RenderIdx::IdleDown;
+			}
+		else
+		{
+			if( velocity.x > 0.0f && crouch == true)
+			{
+				currView = RenderIdx::IdleCrouchRight;
+			}
+			else if( velocity.x < 0.0f && crouch == true)
+			{
+				currView = RenderIdx::IdleCrouchLeft;
+			}
+			else if( velocity.y < 0.0f && crouch == true)
+			{
+				currView = RenderIdx::IdleCrouchUp;
+			}
+			else if( velocity.y > 0.0f && crouch == true)
+			{
+				currView = RenderIdx::IdleCrouchDown;
+			}
+		}
+		}
+		}
+		velocity = dir * speed;
+	}
     
     
    
@@ -506,7 +483,7 @@ public:
 private:
 	
     // acting as bool // change animation cycles
-    int gunValue;
+   
     int proneValue;
     int autoValue;
     //
@@ -560,7 +537,8 @@ int main()
 		// make into switch cases?
 		sf::Vector2f dir = { 0.0f,0.0f };
         int autoCheck = 0;
-        int prone = 0;
+		int gun = 0;
+		int crouching = 1;
         if (sf::Keyboard::isKeyPressed( sf::Keyboard::LControl) ){
             soldier.speed = 0.0f;
                 //aim
@@ -569,27 +547,31 @@ int main()
             //soldier.speed = 0.0f;
                 //fire animations
         }
-        if (sf::Keyboard::isKeyPressed( sf::Keyboard::LShift) ){
+        if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed( sf::Keyboard::LShift) ){
             soldier.speed = 200.0f;
-                //run
         }
-        if (sf::Keyboard::isKeyPressed( sf::Keyboard::C) ){
-            //
-                prone +=1;
-                if (prone == 1)
-                {
-                    soldier.Stealth(prone);
-                    std::cout<<prone;
-                }
+		else if (event.type == sf::Event::KeyReleased){
+			soldier.speed = 115.0f;
+		}
+        // if (sf::Keyboard::isKeyPressed( sf::Keyboard::C) ){
+        //     //
+        //         prone++;
+        //         if (prone == 1)
+        //         {
+        //             soldier.Stealth(prone);
+        //             std::cout<<prone;
+        //         }
            // soldier.speed = 100.0f;
            
                //crouch
-        }
-       // if (sf::Keyboard::isKeyPressed( sf::Keyboard::C) ){
-           // soldier.Stealth(prone);
-           // soldier.speed = 75.0f;
-                //crawl
        // }
+	   
+       if ( sf::Keyboard::isKeyPressed( sf::Keyboard::C)){
+		
+			soldier.crouch = true;
+           //soldier.Stealth(prone);
+			soldier.speed = 75.0f;
+		}
 		if( sf::Keyboard::isKeyPressed( sf::Keyboard::Up ) )
 		{
 			dir.y -= 1.0f;
@@ -625,19 +607,21 @@ int main()
         // NUM check weapon
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num1) )
 		{
-            soldier.CheckWeapon(1);
-            
+		   gun = 1;
+           soldier.CheckWeapon(gun);
 		}
 
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num2) )
 		{
-			soldier.CheckWeapon(2);
-            soldier.CheckIfAuto(autoCheck);
+			gun = 2;
+			soldier.CheckWeapon(gun);
+           // soldier.CheckIfAuto(autoCheck);
 		}
 
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num3) )
 		{
-			soldier.CheckWeapon(3);
+			gun = 3;
+			soldier.CheckWeapon(gun);
 		}
         
 		
