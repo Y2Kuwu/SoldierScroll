@@ -201,6 +201,19 @@ private:
 		//IdleCrawlLeft,
 		//IdleCrawlRight,
 
+		PistolFireUp,
+		PistolFireRight,
+		PistolFireDown,
+		PistolUp,
+		PistolRight,
+		PistolDown,
+		PistolCrouchUp,
+		PistolCrouchRight,
+		PistolCrouchDown,
+		PistolCrawlUp,
+		PistolCrawlRight,
+		PistolCrawlDown,
+
         //note: background images must stop on current frame and must be dependent on soldier movement
 
 
@@ -211,6 +224,12 @@ public:
 	bool crouch = false;
 	int gunValue;
     float speed = 115.0f;
+
+	std::string pistolSort = "Pistol";
+    std::string rifleSort = "Rifle";
+    std::string shotSort = "Shotgun";
+	std::string weapon[3] = {pistolSort, rifleSort, shotSort};
+
 	Char( const sf::Vector2f& currPos )
 		:
 		currPos( currPos )
@@ -262,21 +281,21 @@ public:
                 //note:: maybe try mirroring sprite instead of drawing left and right 
                 //sprite.setScale({-1,1});
                 //**PISTOL** // button #1 make default?
-        // views[(int)RenderIdx::PistolFireUp] = View( 192,0,64,64,6,0.1f );
-		// views[(int)RenderIdx::PistolFireRight] = View( 192,64,64,64,6,0.1f );
-		// views[(int)RenderIdx::PistolFireDown] = View( 192,128,64,64,6,0.1f );
+        views[(int)RenderIdx::PistolFireUp] = View( 192,0,64,64,6,0.1f );
+		views[(int)RenderIdx::PistolFireRight] = View( 192,64,64,64,6,0.1f );
+		views[(int)RenderIdx::PistolFireDown] = View( 192,128,64,64,6,0.1f );
 
-        // views[(int)RenderIdx::PistolIdleUp] = View( 0,0,64,64,1,10.0f );
-		// views[(int)RenderIdx::PistolIdleRight] = View( 0,64,64,64,1,10.0f );
-		// views[(int)RenderIdx::PistolIdleDown] = View( 0,128,64,64,1,10.0f );
+        views[(int)RenderIdx::PistolUp] = View( 0,0,64,64,1,10.0f );
+		views[(int)RenderIdx::PistolRight] = View( 0,64,64,64,1,10.0f );
+		views[(int)RenderIdx::PistolDown] = View( 0,128,64,64,1,10.0f );
 
-        // views[(int)RenderIdx::PistolCrouchUp] = View( 64,0,64,64,1,10.0f );
-		// views[(int)RenderIdx::PistolCrouchRight] = View( 64,64,64,64,1,10.0f );
-		// views[(int)RenderIdx::PistolCrouchDown] = View( 64,128,64,64,1,10.0f );
+        views[(int)RenderIdx::PistolCrouchUp] = View( 64,0,64,64,1,10.0f );
+		views[(int)RenderIdx::PistolCrouchRight] = View( 64,64,64,64,1,10.0f );
+		views[(int)RenderIdx::PistolCrouchDown] = View( 64,128,64,64,1,10.0f );
 
-        // views[(int)RenderIdx::PistolCrawlUp] = View( 128,0,64,64,1,10.0f );
-		// views[(int)RenderIdx::PistolCrawlRight] = View( 128,64,64,64,1,10.0f );
-		// views[(int)RenderIdx::PistolCrawlDown] = View( 128,128,64,64,1,10.0f );
+        views[(int)RenderIdx::PistolCrawlUp] = View( 128,0,64,64,1,10.0f );
+		views[(int)RenderIdx::PistolCrawlRight] = View( 128,64,64,64,1,10.0f );
+		views[(int)RenderIdx::PistolCrawlDown] = View( 128,128,64,64,1,10.0f );
                 //
          //**RIFLE** // button #2 toggle
         // views[(int)RenderIdx::RifleFireUp] = View( 192,192,64,64,6,0.1f );
@@ -332,7 +351,13 @@ public:
     void CheckWeapon(int gun)
     {
 		gunValue = gun; //gunvalue is reading accurately
-		std::cout << gunValue;
+
+		//std::cout << weapon[gunValue-1];
+		//std::string gunSelect[] = {RenderIdx::Count};
+		// for(int i =  int(RenderIdx::GoUp); i != int(RenderIdx::Count); i++)
+		// {
+		// 	i = std::find_if(pistolSort)
+		// }
     }
 
         //check toggle for auto fire
@@ -346,12 +371,10 @@ public:
     }
 
     
+//
+    
 
-    // void SortEnum(  ){
-    //     for (int enumIdx = )
-    // }
-
-
+	//
 	void SetDirection( const sf::Vector2f& dir )
 	{
         // for (auto enumI =  RenderIdx::GoUp; enumI != RenderIdx::Count;)
@@ -382,10 +405,21 @@ public:
         //        1,2,3
 
             //note find enum string value eg:: if includes:: "Pistol" , "Rifle".. or by num
-        
-        std::string pistolSort = "Pistol";
-        std::string rifleSort = "Rifle";
-        std::string shotSort = "Shotgun";
+			std::string rightSet;
+			std::string leftSet;
+			std::string upSet;
+			std::string downSet;
+			rightSet = weapon[gunValue] + "Right";
+			leftSet = weapon[gunValue] + "Left";
+			upSet = weapon[gunValue] + "Up";
+			downSet = weapon[gunValue] + "Down";
+
+        enum match{
+			rightSet,
+			leftSet,
+			upSet,
+			downSet
+		};
         
 
 		if( dir.x > 0.0f ) //check for gunValue and proneValue
@@ -405,6 +439,29 @@ public:
 		{
 			currView = RenderIdx::GoDown;
 		}
+		//weapon movement animation
+		else {
+		if( dir.x > 0.0f ) 
+		{
+			
+			//currView = RenderIdx:: 
+			//RenderIdx currView = (RenderIdx)System.Enum.Parse(typeof(RenderIdx), dirSet);
+			//std::map<std::string,std::string> fstring;
+		}
+		else if( dir.x < 0.0f )
+		{
+			currView = RenderIdx::GoLeft;
+		}
+		else if( dir.y < 0.0f )
+		{
+			currView = RenderIdx::GoUp;
+		}
+		else if( dir.y > 0.0f )
+		{
+			currView = RenderIdx::GoDown;
+		}
+		//
+
 		//crouching animations
 		else{
 		if( dir.x > 0.0f && crouch == true)
@@ -464,6 +521,7 @@ public:
 			{
 				currView = RenderIdx::IdleCrouchDown;
 			}
+		}
 		}
 		}
 		}
