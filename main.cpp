@@ -120,12 +120,18 @@ public:
 		wait( wait )
 	{
 		frames.reserve( viewNum );
+		weaponFrames.reserve(viewNum);
 		actorPtrToTex = Tex::AcquireActor( "actor.png" );
-        assetPtrToTex = Tex::AcquireActor( "asset.png" );
+        assetPtrToTex = Tex::ActorAsset( "asset.png" );
         bgPtrToTex = Tex::AcquireActor( "bg.png" );
 		for( int i = 0; i < viewNum; i++ )
 		{
 			frames.emplace_back( sf::Vector2i{ x,y },sf::Vector2i{ wid,hei } );
+			x += wid;
+		}
+		for( int i = 0; i < viewNum; i++ )
+		{
+			weaponFrames.emplace_back( sf::Vector2i{ x,y },sf::Vector2i{ wid,hei } );
 			x += wid;
 		}
 	}
@@ -138,7 +144,7 @@ public:
 	void SpriteGun(sf::Sprite& a) const
 	{
 		a.setTexture( *assetPtrToTex );
-		a.setTextureRect(frames[iFrame]);
+		a.setTextureRect(weaponFrames[iFrame]);
 	}
 	void Update( float delta )
 	{
@@ -156,6 +162,10 @@ private:
 		{
 			iFrame = 0;
 		}
+		// if( ++wFrame >= int( weaponFrames.size() ) )
+		// {
+		// 	wFrame = 0;
+		// }
 	}
 private:
 	float wait;
@@ -163,7 +173,9 @@ private:
     std::shared_ptr<sf::Texture> assetPtrToTex;
     std::shared_ptr<sf::Texture> bgPtrToTex;
 	std::vector<sf::IntRect> frames;
+	std::vector<sf::IntRect> weaponFrames;
 	int iFrame = 0;
+	int wFrame = 0;
 	float time = 0.0f;
 };
 
@@ -260,6 +272,7 @@ private:
 
 public:
 	bool crouch = false;
+	bool firing = false;
 	int gunValue;
     float speed = 115.0f;
 	
@@ -383,18 +396,75 @@ public:
 	void Draw( sf::RenderTarget& rt ) const
 	{
 		rt.draw( sprite );
+		rt.draw( gunSprite );
 	}
         //check which gun is called
-    void CheckWeapon(int gun)
+    void CheckWeapon(int gun, bool fire, const sf::Vector2f& dir)
     {
-		gunValue = gun; //gunvalue is reading accurately
+		std::string direction;
+		std::string isFiring;
+		fire = firing;
+		gunValue = gun;
+
+		bool headingRight = dir.x > 0.0f;
+        bool headingLeft = dir.x < 0.0f;
+        bool headingUp = dir.y < 0.0f;
+        bool headingDown = dir.y > 0.0f;
+        bool idlRight = velocity.x > 0.0f;
+        bool idlLeft = velocity.x < 0.0f;
+        bool idlUp = velocity.y < 0.0f;
+        bool idlDown = velocity.y > 0.0f;
+
+		velocity = dir * speed;
+		if(firing == true && gunValue != 0){
+			isFiring = "Fire";
+		}
+
+		if(headingRight)
+		{
+			direction = "Right";
+		}
+		else if(headingLeft)
+		{
+			direction = "Right"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+		}
+		else if(headingUp)
+		{
+			direction = "Up";
+		}
+		else if(headingDown)
+		{
+			direction = "down";
+		}
+		else{
+			if(idlRight)
+		{
+			direction = "Right";
+		}
+		else if(idlLeft)
+		{
+			direction = "Right"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+		}
+		else if(idlUp)
+		{
+			direction = "Up";
+		}
+		else if(idlDown)
+		{
+			direction = "down";
+		}
+
+		}
+
+		 //gunvalue is reading accurately -1
+
 		std::cout<< weapon[gunValue-1];
 		std::map<RenderWeaponIdx, std::string> gunner;
 		std::map<RenderWeaponIdx, std::string>::iterator gunn;
-	  	gunner[RenderWeaponIdx::PistolFireUp] = "Pistol";
+	  	gunner[RenderWeaponIdx::PistolFireUp] = "PistolFireUp";
 		for(gunn = gunner.begin(); gunn != gunner.end(); gunn++){
 		if(weapon[gunValue-1] == gunn->second){
-			std::cout << "pistol found";
+
 		}
 		}
 		//std::cout << weapon[gunValue-1];
@@ -430,14 +500,7 @@ public:
         // }
 
             //for switch statement
-        bool headingRight = dir.x > 0.0f;
-        bool headingLeft = dir.x < 0.0f;
-        bool headingUp = dir.y < 0.0f;
-        bool headingDown = dir.y > 0.0f;
-        bool idlRight = velocity.x > 0.0f;
-        bool idlLeft = velocity.x < 0.0f;
-        bool idlUp = velocity.y < 0.0f;
-        bool idlDown = velocity.y > 0.0f;
+        
        
          
         //std::vector<bool> velDir = 
@@ -472,6 +535,7 @@ public:
 		if( dir.x > 0.0f ) //check for gunValue and proneValue
 		{
 			currView = RenderIdx::GoRight;
+			currWepView = RenderWeaponIdx::PistolRight;
 			
 		}
 		else if( dir.x < 0.0f )
@@ -585,11 +649,24 @@ public:
 		views[int( currView )].Update( delta );
 		views[int( currView )].SpritePaint( sprite);
 		// copy function same mirror location
-		gunViews[int( currView )].Update( delta );
-		gunViews[int( currView )].SpriteGun( gunSprite);
+		// gunViews[int( currWepView )].Update( delta );
+		// gunViews[int( currWepView )].SpriteGun( gunSprite);
 		sprite.setPosition( currPos );
 		gunSprite.setPosition( currPos ); // if left flip/mirror sprite
 	}
+
+		void UpdateGun( float delta )
+	{
+		currPos += velocity * delta;
+		//views[int( currView )].Update( delta );
+		//views[int( currView )].SpritePaint( sprite);
+		// copy function same mirror location
+		gunViews[int( currWepView )].Update( delta );
+		gunViews[int( currWepView )].SpriteGun( gunSprite);
+		//sprite.setPosition( currPos );
+		gunSprite.setPosition( currPos ); // if left flip/mirror sprite
+	}
+	
 private:
 	
     // acting as bool // change animation cycles
@@ -605,6 +682,7 @@ private:
 	View views[int( RenderIdx::Count )];
 	View gunViews[int( RenderWeaponIdx::Count )]; // within Char
 	RenderIdx currView = RenderIdx::IdleRight;
+	RenderWeaponIdx currWepView = RenderWeaponIdx::PistolRight;
 };
 
 int main()
@@ -616,12 +694,14 @@ int main()
 	{
 		Char soldier( { 100.0f,100.0f } );
 		Char soldierCorpse( { 100.0f,200.0f } );
+		Char weapon ({20.0f,20.0f});
+		Char weaponEmpty ({20.0f,40.0f});
 	}
 
 	Tex::clearPtr();
 
 	Char soldier( { 100.0f,100.0f } );
-
+	Char weapon ( { 20.0f, 20.0f } );
 	// timepoint for delta time measurement
 	auto tp = std::chrono::steady_clock::now();
 
@@ -653,6 +733,7 @@ int main()
 		int crouching = 1;
         if (sf::Keyboard::isKeyPressed( sf::Keyboard::LControl) ){
             soldier.speed = 0.0f;
+			weapon.speed = 0.0f;
                 //aim
         }
         if (sf::Keyboard::isKeyPressed( sf::Keyboard::Space) ){
@@ -661,9 +742,11 @@ int main()
         }
         if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed( sf::Keyboard::LShift) ){
             soldier.speed = 200.0f;
+			weapon.speed = 200.0f;
         }
 		else if (event.type == sf::Event::KeyReleased){
 			soldier.speed = 115.0f;
+			weapon.speed = 115.0f;
 		}
         // if (sf::Keyboard::isKeyPressed( sf::Keyboard::C) ){
         //     //
@@ -683,6 +766,7 @@ int main()
 			soldier.crouch = true;
            //soldier.Stealth(prone);
 			soldier.speed = 75.0f;
+			weapon.speed = 75.0f;
 		}
 		if( sf::Keyboard::isKeyPressed( sf::Keyboard::Up ) )
 		{
@@ -720,33 +804,40 @@ int main()
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num1) )
 		{
 		   gun = 1;
-           soldier.CheckWeapon(gun);
+           soldier.CheckWeapon(gun, soldier.firing, dir);
 		}
 
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num2) )
 		{
 			gun = 2;
-			soldier.CheckWeapon(gun);
+			soldier.CheckWeapon(gun, soldier.firing, dir);
            // soldier.CheckIfAuto(autoCheck);
 		}
 
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num3) )
 		{
 			gun = 3;
-			soldier.CheckWeapon(gun);
+			soldier.CheckWeapon(gun, soldier.firing, dir);
+		}
+		if( sf::Keyboard::isKeyPressed( sf::Keyboard::Space) )
+		{
+			//gun = gun;
+			soldier.firing = true;
+			soldier.CheckWeapon(gun, soldier.firing, dir);
 		}
         
 		
 		soldier.SetDirection( dir );
-		
+		weapon.SetDirection( dir );
 
 		// update model
 		soldier.Update( delta );
-
+		weapon.UpdateGun( delta );
 		// Clear screen
 		window.clear();
 		// Draw the sprite
 		soldier.Draw( window );
+		weapon.Draw( window );
 		// Update the window
 		window.display();
 	}
