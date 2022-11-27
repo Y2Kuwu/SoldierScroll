@@ -388,9 +388,15 @@ public:
     void CheckWeapon(int gun)
     {
 		gunValue = gun; //gunvalue is reading accurately
-		std::cout<< gunValue;
+		std::cout<< weapon[gunValue-1];
 		std::map<RenderWeaponIdx, std::string> gunner;
-	  	gunner[RenderWeaponIdx::PistolFireUp] = "PistolFireUp";
+		std::map<RenderWeaponIdx, std::string>::iterator gunn;
+	  	gunner[RenderWeaponIdx::PistolFireUp] = "Pistol";
+		for(gunn = gunner.begin(); gunn != gunner.end(); gunn++){
+		if(weapon[gunValue-1] == gunn->second){
+			std::cout << "pistol found";
+		}
+		}
 		//std::cout << weapon[gunValue-1];
 		//std::string gunSelect[] = {RenderIdx::Count};
 		// for(int i =  int(RenderIdx::GoUp); i != int(RenderIdx::Count); i++)
