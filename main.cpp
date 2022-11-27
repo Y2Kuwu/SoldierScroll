@@ -4,7 +4,6 @@
 #include <vector>
 #include <memory>
 #include <unordered_map>
-#include <map>
 #include <string>
 #include <iostream>
 
@@ -112,8 +111,8 @@ std::unordered_map<std::string,std::shared_ptr<sf::Texture>> Tex::bgPtr;
 class View
 {
 public:
-    
-
+    int hei;
+	int wid;
 	View() = default;
 	View( int x,int y,int wid,int hei,int viewNum,float wait )
 		:
@@ -135,6 +134,7 @@ public:
 			x += wid;
 		}
 	}
+	
 	void SpritePaint( sf::Sprite& s) const //sf::Sprite& a sf::Sprite& bg
 	{
 		s.setTexture( *actorPtrToTex ); // a.setTexture( *ptrToTex ); b.setTexture( *ptrToTex );
@@ -162,10 +162,6 @@ private:
 		{
 			iFrame = 0;
 		}
-		// if( ++wFrame >= int( weaponFrames.size() ) )
-		// {
-		// 	wFrame = 0;
-		// }
 	}
 private:
 	float wait;
@@ -175,7 +171,6 @@ private:
 	std::vector<sf::IntRect> frames;
 	std::vector<sf::IntRect> weaponFrames;
 	int iFrame = 0;
-	int wFrame = 0;
 	float time = 0.0f;
 };
 
@@ -399,12 +394,16 @@ public:
 		rt.draw( gunSprite );
 	}
         //check which gun is called
-    void CheckWeapon(int gun, bool fire, const sf::Vector2f& dir)
+    void CheckWeapon(int gun, bool fire, bool crouching, const sf::Vector2f& dir)
     {
+		
 		std::string direction;
 		std::string isFiring;
+		std::string isCrouching;
+		std::string match;
 		fire = firing;
-		gunValue = gun;
+		gun = gunValue;
+		crouching = crouch;
 
 		bool headingRight = dir.x > 0.0f;
         bool headingLeft = dir.x < 0.0f;
@@ -415,11 +414,9 @@ public:
         bool idlUp = velocity.y < 0.0f;
         bool idlDown = velocity.y > 0.0f;
 
-		velocity = dir * speed;
-		if(firing == true && gunValue != 0){
-			isFiring = "Fire";
-		}
-
+		//velocity = dir * speed;
+		
+		//////// NOT MOVING WHILE NOT CROUCHING OR FIRING
 		if(headingRight)
 		{
 			direction = "Right";
@@ -427,6 +424,7 @@ public:
 		else if(headingLeft)
 		{
 			direction = "Right"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
 		}
 		else if(headingUp)
 		{
@@ -434,8 +432,9 @@ public:
 		}
 		else if(headingDown)
 		{
-			direction = "down";
+			direction = "Down";
 		}
+		//////// NOT MOVING WHILE NOT CROUCHING OR FIRING
 		else{
 			if(idlRight)
 		{
@@ -444,6 +443,7 @@ public:
 		else if(idlLeft)
 		{
 			direction = "Right"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
 		}
 		else if(idlUp)
 		{
@@ -451,17 +451,157 @@ public:
 		}
 		else if(idlDown)
 		{
-			direction = "down";
+			direction = "Down";
+		}
+		//////// MOVING AND CROUCHING
+
+		if(headingRight && crouch == true)
+		{
+			direction = "Right";
+			isCrouching = "Crouch";
+		}
+		else if(headingLeft && crouch == true)
+		{
+			direction = "Right"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			isCrouching = "Crouch";
+			gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
+		}
+		else if(headingUp && crouch == true)
+		{
+			direction = "Up";
+			isCrouching = "Crouch";
+		}
+		else if(headingDown && crouch == true)
+		{
+			direction = "Down";
+			isCrouching = "Crouch";
+		}
+		////// IDLE AND CROUCHING 
+		else{
+			if(idlRight && crouch == true)
+		{
+			direction = "Right";
+			isCrouching = "Crouch";
+		}
+		else if(idlLeft && crouch == true)
+		{
+			direction = "Right"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			isCrouching = "Crouch";
+			gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
+		}
+		else if(idlUp && crouch == true)
+		{
+			direction = "Up";
+			isCrouching = "Crouch";
+		}
+		else if(idlDown && crouch == true)
+		{
+			direction = "Down";
+			isCrouching = "Crouch";
+		}
+		else{
+			///////CROUCHING AND FIRING WHILE *NOT* MOVING
+			if(idlRight && crouch == true && firing == true)
+		{
+			direction = "Right";
+			isCrouching = "Crouch";
+			isFiring = "Fire";
+		}
+		else if(idlLeft && crouch == true && firing == true)
+		{
+			direction = "Right"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			isCrouching = "Crouch";
+			isFiring = "Fire";
+			gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
+		}
+		else if(idlUp && crouch == true && firing == true)
+		{
+			direction = "Up";
+			isCrouching = "Crouch";
+			isFiring = "Fire";
+		}
+		else if(idlDown && crouch == true && firing == true)
+		{
+			direction = "Down";
+			isCrouching = "Crouch";
+			isFiring = "Fire";
 		}
 
+		//
+		else{
+			///////CROUCHING AND FIRING WHILE MOVING
+			if(headingRight && crouch == true && firing == true)
+		{
+			direction = "Right";
+			isCrouching = "Crouch";
+			isFiring = "Fire";
 		}
-
+		else if(headingLeft && crouch == true && firing == true)
+		{
+			direction = "Right"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			isCrouching = "Crouch";
+			isFiring = "Fire";
+			gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
+		}
+		else if(headingUp && crouch == true && firing == true)
+		{
+			direction = "Up";
+			isCrouching = "Crouch";
+			isFiring = "Fire";
+		}
+		else if(headingDown && crouch == true && firing == true)
+		{
+			direction = "Down";
+			isCrouching = "Crouch";
+			isFiring = "Fire";
+		}
+		else{
+			/////// STANDING AND FIRING
+			if(headingRight && crouch == false && firing == true)
+		{
+			direction = "Right";
+			//isCrouching = "Crouch";
+			isFiring = "Fire";
+		}
+		else if(headingLeft && crouch == false && firing == true)
+		{
+			direction = "Right"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			//isCrouching = "Crouch";
+			isFiring = "Fire";
+			gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
+		}
+		else if(headingUp && crouch == false && firing == true)
+		{
+			direction = "Up";
+			//isCrouching = "Crouch";
+			isFiring = "Fire";
+		}
+		else if(headingDown && crouch == false && firing == true)
+		{
+			direction = "Down";
+			//isCrouching = "Crouch";
+			isFiring = "Fire";
+		}
+		}
+		}
+		}
+		}
+		}
+		velocity = dir * speed;
 		 //gunvalue is reading accurately -1
 
 		std::cout<< weapon[gunValue-1];
 		std::map<RenderWeaponIdx, std::string> gunner;
 		std::map<RenderWeaponIdx, std::string>::iterator gunn;
 	  	gunner[RenderWeaponIdx::PistolFireUp] = "PistolFireUp";
+		gunner[RenderWeaponIdx::PistolFireDown] ="PistolFireDown";
+		gunner[RenderWeaponIdx::PistolFireRight] = "PistolFireRight";
+		gunner[RenderWeaponIdx::PistolUp] = "PistolUp";
+		gunner[RenderWeaponIdx::PistolDown] = "PistolDown";
+		gunner[RenderWeaponIdx::PistolRight] = "PistolRight";
+		gunner[RenderWeaponIdx::PistolCrouchUp] = "PistolCrouchUp";
+		gunner[RenderWeaponIdx::PistolCrouchDown] = "PistolCrouchDown";
+		gunner[RenderWeaponIdx::PistolCrouchRight] = "PistolCrouchRight";
 		for(gunn = gunner.begin(); gunn != gunner.end(); gunn++){
 		if(weapon[gunValue-1] == gunn->second){
 
@@ -535,8 +675,6 @@ public:
 		if( dir.x > 0.0f ) //check for gunValue and proneValue
 		{
 			currView = RenderIdx::GoRight;
-			currWepView = RenderWeaponIdx::PistolRight;
-			
 		}
 		else if( dir.x < 0.0f )
 		{
@@ -701,7 +839,7 @@ int main()
 	Tex::clearPtr();
 
 	Char soldier( { 100.0f,100.0f } );
-	Char weapon ( { 20.0f, 20.0f } );
+	Char weapon ( { 10.0f, 100.0f } );
 	// timepoint for delta time measurement
 	auto tp = std::chrono::steady_clock::now();
 
@@ -804,26 +942,26 @@ int main()
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num1) )
 		{
 		   gun = 1;
-           soldier.CheckWeapon(gun, soldier.firing, dir);
+           soldier.CheckWeapon(gun, soldier.firing, soldier.crouch, dir);
 		}
 
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num2) )
 		{
 			gun = 2;
-			soldier.CheckWeapon(gun, soldier.firing, dir);
+			soldier.CheckWeapon(gun, soldier.firing, soldier.crouch, dir);
            // soldier.CheckIfAuto(autoCheck);
 		}
 
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num3) )
 		{
 			gun = 3;
-			soldier.CheckWeapon(gun, soldier.firing, dir);
+			soldier.CheckWeapon(gun, soldier.firing, soldier.crouch, dir);
 		}
 		if( sf::Keyboard::isKeyPressed( sf::Keyboard::Space) )
 		{
 			//gun = gun;
 			soldier.firing = true;
-			soldier.CheckWeapon(gun, soldier.firing, dir);
+			soldier.CheckWeapon(gun, soldier.firing, soldier.crouch, dir);
 		}
         
 		
