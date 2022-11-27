@@ -4,9 +4,9 @@
 #include <vector>
 #include <memory>
 #include <unordered_map>
+#include <map>
 #include <string>
 #include <iostream>
-
 
 class Tex
 {
@@ -129,10 +129,16 @@ public:
 			x += wid;
 		}
 	}
-	void SpritePaint( sf::Sprite& s ) const //sf::Sprite& a sf::Sprite& bg
+	void SpritePaint( sf::Sprite& s) const //sf::Sprite& a sf::Sprite& bg
 	{
 		s.setTexture( *actorPtrToTex ); // a.setTexture( *ptrToTex ); b.setTexture( *ptrToTex );
 		s.setTextureRect( frames[iFrame] ); // a.setTextureRect( frames[iFrame] ); bg.setTextureRect( frames[iFrame] );
+		
+	}
+	void SpriteGun(sf::Sprite& a) const
+	{
+		a.setTexture( *assetPtrToTex );
+		a.setTextureRect(frames[iFrame]);
 	}
 	void Update( float delta )
 	{
@@ -201,18 +207,10 @@ private:
 		//IdleCrawlLeft,
 		//IdleCrawlRight,
 
-		PistolFireUp,
-		PistolFireRight,
-		PistolFireDown,
-		PistolUp,
-		PistolRight,
-		PistolDown,
-		PistolCrouchUp,
-		PistolCrouchRight,
-		PistolCrouchDown,
-		PistolCrawlUp,
-		PistolCrawlRight,
-		PistolCrawlDown,
+		
+		//PistolCrawlUp,
+		//PistolCrawlRight,
+		//PistolCrawlDown,
 
         //note: background images must stop on current frame and must be dependent on soldier movement
 
@@ -220,16 +218,55 @@ private:
 
 		Count
 	};
+
+	
+	enum class RenderWeaponIdx : int{
+		PistolFireUp = 0,
+		PistolFireRight= 1,
+		PistolFireDown= 2,
+		PistolUp= 3,
+		PistolRight= 4,
+		PistolDown= 5,
+		PistolCrouchUp= 6,
+		PistolCrouchRight= 7,
+		PistolCrouchDown= 8,
+
+		RifleFireUp= 9,
+		RifleFireRight= 10,
+		RifleFireDown= 11,
+		RifleUp= 12,
+		RifleRight= 13,
+		RifleDown= 14,
+		RifleCrouchUp= 15,
+		RifleCrouchRight= 16,
+		RifleCrouchDown= 17,
+
+		ShotgunFireUp= 18,
+		ShotgunFireRight= 19,
+		ShotgunFireDown= 20,
+		ShotgunUp= 21,
+		ShotgunRight= 22,
+		ShotgunDown= 23,
+		ShotgunCrouchUp= 24,
+		ShotgunCrouchRight= 25,
+		ShotgunCrouchDown= 26,
+
+		
+
+		Count
+	};
+	
+		
+
 public:
 	bool crouch = false;
 	int gunValue;
     float speed = 115.0f;
-
+	
 	std::string pistolSort = "Pistol";
     std::string rifleSort = "Rifle";
     std::string shotSort = "Shotgun";
 	std::string weapon[3] = {pistolSort, rifleSort, shotSort};
-
 	Char( const sf::Vector2f& currPos )
 		:
 		currPos( currPos )
@@ -281,68 +318,68 @@ public:
                 //note:: maybe try mirroring sprite instead of drawing left and right 
                 //sprite.setScale({-1,1});
                 //**PISTOL** // button #1 make default?
-        views[(int)RenderIdx::PistolFireUp] = View( 192,0,64,64,6,0.1f );
-		views[(int)RenderIdx::PistolFireRight] = View( 192,64,64,64,6,0.1f );
-		views[(int)RenderIdx::PistolFireDown] = View( 192,128,64,64,6,0.1f );
+        
+		gunViews[(int)RenderWeaponIdx::PistolFireUp] = View( 192,0,64,64,6,0.1f );
+		gunViews[(int)RenderWeaponIdx::PistolFireRight] = View( 192,64,64,64,6,0.1f );
+		gunViews[(int)RenderWeaponIdx::PistolFireDown] = View( 192,128,64,64,6,0.1f );
 
-        views[(int)RenderIdx::PistolUp] = View( 0,0,64,64,1,10.0f );
-		views[(int)RenderIdx::PistolRight] = View( 0,64,64,64,1,10.0f );
-		views[(int)RenderIdx::PistolDown] = View( 0,128,64,64,1,10.0f );
+        gunViews[(int)RenderWeaponIdx::PistolUp] = View( 0,0,64,64,1,10.0f );
+		gunViews[(int)RenderWeaponIdx::PistolRight] = View( 0,64,64,64,1,10.0f );
+		gunViews[(int)RenderWeaponIdx::PistolDown] = View( 0,128,64,64,1,10.0f );
 
-        views[(int)RenderIdx::PistolCrouchUp] = View( 64,0,64,64,1,10.0f );
-		views[(int)RenderIdx::PistolCrouchRight] = View( 64,64,64,64,1,10.0f );
-		views[(int)RenderIdx::PistolCrouchDown] = View( 64,128,64,64,1,10.0f );
+        gunViews[(int)RenderWeaponIdx::PistolCrouchUp] = View( 64,0,64,64,1,10.0f );
+		gunViews[(int)RenderWeaponIdx::PistolCrouchRight] = View( 64,64,64,64,1,10.0f );
+		gunViews[(int)RenderWeaponIdx::PistolCrouchDown] = View( 64,128,64,64,1,10.0f );
 
-        views[(int)RenderIdx::PistolCrawlUp] = View( 128,0,64,64,1,10.0f );
-		views[(int)RenderIdx::PistolCrawlRight] = View( 128,64,64,64,1,10.0f );
-		views[(int)RenderIdx::PistolCrawlDown] = View( 128,128,64,64,1,10.0f );
+
+       // gunViews[(int)RenderIdx::PistolCrawlUp] = View( 128,0,64,64,1,10.0f );
+		//gunViews[(int)RenderIdx::PistolCrawlRight] = View( 128,64,64,64,1,10.0f );
+		//gunViews[(int)RenderIdx::PistolCrawlDown] = View( 128,128,64,64,1,10.0f );
                 //
          //**RIFLE** // button #2 toggle
-        // views[(int)RenderIdx::RifleFireUp] = View( 192,192,64,64,6,0.1f );
-		// views[(int)RenderIdx::RifleFireRight] = View( 192,256,64,64,6,0.1f );
-		// views[(int)RenderIdx::RifleFireDown] = View( 192,320,64,64,6,0.1f );
+        gunViews[(int)RenderWeaponIdx::RifleFireUp] = View( 192,192,64,64,6,0.1f );
+		gunViews[(int)RenderWeaponIdx::RifleFireRight] = View( 192,256,64,64,6,0.1f );
+		gunViews[(int)RenderWeaponIdx::RifleFireDown] = View( 192,320,64,64,6,0.1f );
                 //auto //       //make sure to end animations if not fired to corresponding idle animations
-        // views[(int)RenderIdx::AutoRifleFireUp] = View( 192,384,64,64,9,0.1f );
-		// views[(int)RenderIdx::AutoRifleFireRight] = View( 192,448,64,64,9,0.1f );
-		// views[(int)RenderIdx::AutoRifleFireDown] = View( 192,512,64,64,9,0.1f );
+        // gunViews[(int)RenderWeaponIdx::AutoRifleFireUp] = View( 192,384,64,64,9,0.1f );
+		// gunViews[(int)RenderWeaponIdx::AutoRifleFireRight] = View( 192,448,64,64,9,0.1f );
+		// gunViews[(int)RenderWeaponIdx::AutoRifleFireDown] = View( 192,512,64,64,9,0.1f );
                 //
-        // views[(int)RenderIdx::RifleIdleUp] = View( 0,192,64,64,1,10.0f );
-		// views[(int)RenderIdx::RifleIdleRight] = View( 0,256,64,64,1,10.0f );
-		// views[(int)RenderIdx::RifleIdleDown] = View( 0,320,64,64,1,10.0f );
+        gunViews[(int)RenderWeaponIdx::RifleUp] = View( 0,192,64,64,1,10.0f );
+		gunViews[(int)RenderWeaponIdx::RifleRight] = View( 0,256,64,64,1,10.0f );
+		gunViews[(int)RenderWeaponIdx::RifleDown] = View( 0,320,64,64,1,10.0f );
 
-        // views[(int)RenderIdx::RifleCrouchUp] = View( 64,192,64,64,1,10.0f );
-		// views[(int)RenderIdx::RifleCrouchRight] = View( 64,256,64,64,1,10.0f );
-		// views[(int)RenderIdx::RifleCrouchDown] = View( 64,320,64,64,1,10.0f );
+        gunViews[(int)RenderWeaponIdx::RifleCrouchUp] = View( 64,192,64,64,1,10.0f );
+		gunViews[(int)RenderWeaponIdx::RifleCrouchRight] = View( 64,256,64,64,1,10.0f );
+		gunViews[(int)RenderWeaponIdx::RifleCrouchDown] = View( 64,320,64,64,1,10.0f );
 
-        // views[(int)RenderIdx::RifleCrawlUp] = View( 128,192,64,64,1,10.0f );
-		// views[(int)RenderIdx::RifleCrawlRight] = View( 128,256,64,64,1,10.0f );
-		// views[(int)RenderIdx::RifleCrawlDown] = View( 128,320,64,64,1,10.0f );
+        // gunViews[(int)RenderIdx::RifleCrawlUp] = View( 128,192,64,64,1,10.0f );
+		// gunViews[(int)RenderIdx::RifleCrawlRight] = View( 128,256,64,64,1,10.0f );
+		// gunViews[(int)RenderIdx::RifleCrawlDown] = View( 128,320,64,64,1,10.0f );
                 //
 
                 //
          //**SHOTGUN** // button #3 toggle
-        // views[(int)RenderIdx::RifleFireUp] = View( 192,384,64,64,6,0.1f );
-		// views[(int)RenderIdx::RifleFireRight] = View( 192,448,64,64,6,0.1f );
-		// views[(int)RenderIdx::RifleFireDown] = View( 192,512,64,64,6,0.1f );
+        gunViews[(int)RenderWeaponIdx::ShotgunFireUp] = View( 192,384,64,64,6,0.1f );
+		gunViews[(int)RenderWeaponIdx::ShotgunFireRight] = View( 192,448,64,64,6,0.1f );
+		gunViews[(int)RenderWeaponIdx::ShotgunFireDown] = View( 192,512,64,64,6,0.1f );
 
-        // views[(int)RenderIdx::RifleIdleUp] = View( 0,384,64,64,1,10.0f );
-		// views[(int)RenderIdx::RifleIdleRight] = View( 0,448,64,64,1,10.0f );
-		// views[(int)RenderIdx::RifleIdleDown] = View( 0,512,64,64,1,10.0f );
+        gunViews[(int)RenderWeaponIdx::ShotgunUp] = View( 0,384,64,64,1,10.0f );
+		gunViews[(int)RenderWeaponIdx::ShotgunRight] = View( 0,448,64,64,1,10.0f );
+		gunViews[(int)RenderWeaponIdx::ShotgunDown] = View( 0,512,64,64,1,10.0f );
 
-        // views[(int)RenderIdx::RifleCrouchUp] = View( 64,384,64,64,1,10.0f );
-		// views[(int)RenderIdx::RifleCrouchRight] = View( 64,448,64,64,1,10.0f );
-		// views[(int)RenderIdx::RifleCrouchDown] = View( 64,512,64,64,1,10.0f );
+        gunViews[(int)RenderWeaponIdx::ShotgunCrouchUp] = View( 64,384,64,64,1,10.0f );
+		gunViews[(int)RenderWeaponIdx::ShotgunCrouchRight] = View( 64,448,64,64,1,10.0f );
+		gunViews[(int)RenderWeaponIdx::ShotgunCrouchDown] = View( 64,512,64,64,1,10.0f );
 
-        // views[(int)RenderIdx::RifleCrawlUp] = View( 128,384,64,64,1,10.0f );
-		// views[(int)RenderIdx::RifleCrawlRight] = View( 128,448,64,64,1,10.0f );
-		// views[(int)RenderIdx::RifleCrawlDown] = View( 128,512,64,64,1,10.0f );
+        // gunViews[(int)RenderIdx::RifleCrawlUp] = View( 128,384,64,64,1,10.0f );
+		// gunViews[(int)RenderIdx::RifleCrawlRight] = View( 128,448,64,64,1,10.0f );
+		// gunViews[(int)RenderIdx::RifleCrawlDown] = View( 128,512,64,64,1,10.0f );
                 //
                     //add more below 
-
-
-
-
 	}
+	
+
 	void Draw( sf::RenderTarget& rt ) const
 	{
 		rt.draw( sprite );
@@ -351,7 +388,9 @@ public:
     void CheckWeapon(int gun)
     {
 		gunValue = gun; //gunvalue is reading accurately
-
+		std::cout<< gunValue;
+		std::map<RenderWeaponIdx, std::string> gunner;
+	  	gunner[RenderWeaponIdx::PistolFireUp] = "PistolFireUp";
 		//std::cout << weapon[gunValue-1];
 		//std::string gunSelect[] = {RenderIdx::Count};
 		// for(int i =  int(RenderIdx::GoUp); i != int(RenderIdx::Count); i++)
@@ -370,9 +409,9 @@ public:
         }
     }
 
-    
-//
-    
+   
+
+	
 
 	//
 	void SetDirection( const sf::Vector2f& dir )
@@ -385,14 +424,14 @@ public:
         // }
 
             //for switch statement
-        // bool headingRight = dir.x > 0.0f;
-        // bool headingLeft = dir.x < 0.0f;
-        // bool headingUp = dir.y < 0.0f;
-        // bool headingDown = dir.y > 0.0f;
-        // bool idlRight = velocity.x > 0.0f;
-        // bool idlLeft = velocity.x < 0.0f;
-        // bool idlUp = velocity.y < 0.0f;
-        // bool idlDown = velocity.y > 0.0f;
+        bool headingRight = dir.x > 0.0f;
+        bool headingLeft = dir.x < 0.0f;
+        bool headingUp = dir.y < 0.0f;
+        bool headingDown = dir.y > 0.0f;
+        bool idlRight = velocity.x > 0.0f;
+        bool idlLeft = velocity.x < 0.0f;
+        bool idlUp = velocity.y < 0.0f;
+        bool idlDown = velocity.y > 0.0f;
        
          
         //std::vector<bool> velDir = 
@@ -405,26 +444,29 @@ public:
         //        1,2,3
 
             //note find enum string value eg:: if includes:: "Pistol" , "Rifle".. or by num
-			std::string rightSet;
-			std::string leftSet;
-			std::string upSet;
-			std::string downSet;
-			rightSet = weapon[gunValue] + "Right";
-			leftSet = weapon[gunValue] + "Left";
-			upSet = weapon[gunValue] + "Up";
-			downSet = weapon[gunValue] + "Down";
+		// 	std::string rightSet;
+		// 	std::string leftSet;
+		// 	std::string upSet;
+		// 	std::string downSet;
+		// 	rightSet = weapon[gunValue] + "Right";
+		// 	leftSet = weapon[gunValue] + "Left";
+		// 	upSet = weapon[gunValue] + "Up";
+		// 	downSet = weapon[gunValue] + "Down";
 
-        enum match{
-			rightSet,
-			leftSet,
-			upSet,
-			downSet
-		};
-        
+        // enum match{
+		// 	rightSet,
+		// 	leftSet,
+		// 	upSet,
+		// 	downSet
+		// };
+		
+      
+		
 
 		if( dir.x > 0.0f ) //check for gunValue and proneValue
 		{
 			currView = RenderIdx::GoRight;
+			
 		}
 		else if( dir.x < 0.0f )
 		{
@@ -535,8 +577,12 @@ public:
 	{
 		currPos += velocity * delta;
 		views[int( currView )].Update( delta );
-		views[int( currView )].SpritePaint( sprite );
+		views[int( currView )].SpritePaint( sprite);
+		// copy function same mirror location
+		gunViews[int( currView )].Update( delta );
+		gunViews[int( currView )].SpriteGun( gunSprite);
 		sprite.setPosition( currPos );
+		gunSprite.setPosition( currPos ); // if left flip/mirror sprite
 	}
 private:
 	
@@ -549,7 +595,9 @@ private:
 	sf::Vector2f currPos;
 	sf::Vector2f velocity = {0.0f,0.0f};
 	sf::Sprite sprite;
+	sf::Sprite gunSprite;
 	View views[int( RenderIdx::Count )];
+	View gunViews[int( RenderWeaponIdx::Count )]; // within Char
 	RenderIdx currView = RenderIdx::IdleRight;
 };
 
