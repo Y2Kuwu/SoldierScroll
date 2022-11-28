@@ -269,7 +269,51 @@ private:
 	};
 
 	enum class RenderEnemyIdx{
-		
+		LightGoUp,
+		LightGoDown,
+		LightGoLeft,
+		LightGoRight,
+
+		LightIdleUp,
+		LightIdleDown,
+		LightIdleLeft,
+		LightIdleRight,
+
+		LightFireUp,
+		LightFireDown,
+		LightFireLeft,
+		LightFireRight,
+
+		MedGoUp,
+		MedGoDown,
+		MedGoLeft,
+		MedGoRight,
+
+		MedIdleUp,
+		MedIdleDown,
+		MedIdleLeft,
+		MedIdleRight,
+
+		MedFireUp,
+		MedFireDown,
+		MedFireLeft,
+		MedFireRight,
+
+		HeavyGoUp,
+		HeavyGoDown,
+		HeavyGoLeft,
+		HeavyGoRight,
+
+		HeavyIdleUp,
+		HeavyIdleDown,
+		HeavyIdleLeft,
+		HeavyIdleRight,
+
+		HeavyFireUp,
+		HeavyFireDown,
+		HeavyFireLeft,
+		HeavyFireRight,
+
 		Count
 	};
 	
@@ -283,10 +327,10 @@ public:
 	
 
 	sf::FloatRect playerBounds = sprite.getGlobalBounds();
-	sf::FloatRect healthKit = health.getGlobalBounds();
-	sf::FloatRect armorKit = armor.getGlobalBounds();
-	sf::FloatRect ammoKit = ammo.getGlobalBounds();
-	sf::FloatRect projHit = projectile.getGlobalBounds();
+	//sf::FloatRect healthKit = health.getGlobalBounds();
+	//sf::FloatRect armorKit = armor.getGlobalBounds();
+	//sf::FloatRect ammoKit = ammo.getGlobalBounds();
+	//sf::FloatRect projHit = projectile.getGlobalBounds();
 
 	
 	
@@ -750,42 +794,7 @@ public:
 	//
 	void SetDirection( const sf::Vector2f& dir )
 	{
-        // for (auto enumI =  RenderIdx::GoUp; enumI != RenderIdx::Count;)
-        // {   
-        //     // if(enumI == RenderIdx::GoDown){
-        //     //     std::cout<< "f";
-        //     // }
-        // }
-
-            //for switch statement
-        
        
-         
-        //std::vector<bool> velDir = 
-        //{headingDown,headingUp,headingLeft,headingRight,idlDown,idlUp,idlLeft,idlRight};
-        //int velDir[]= {headingDown,headingUp,headingLeft,headingRight,idlDown,idlUp,idlLeft,idlRight};
-
-        //std::vector<bool>::iterator vd;
-        //for (vd = velDir.begin() ; vd != velDir.end(); ++vd)
-        //include proneValue , gunValue , autoValue
-        //        1,2,3
-
-            //note find enum string value eg:: if includes:: "Pistol" , "Rifle".. or by num
-		// 	std::string rightSet;
-		// 	std::string leftSet;
-		// 	std::string upSet;
-		// 	std::string downSet;
-		// 	rightSet = weapon[gunValue] + "Right";
-		// 	leftSet = weapon[gunValue] + "Left";
-		// 	upSet = weapon[gunValue] + "Up";
-		// 	downSet = weapon[gunValue] + "Down";
-
-        // enum match{
-		// 	rightSet,
-		// 	leftSet,
-		// 	upSet,
-		// 	downSet
-		// };
 		
       
 		
@@ -948,10 +957,48 @@ public:
 	int ammo = 50;
 	int health = 100;
 	int armor = 0;
+	sf::Text totAmmo;
+	sf::Text totArmor;
+	sf::Text totHealth;
+	sf::RectangleShape stat;
 	std::vector<sf::RectangleShape>projectile;
-	PlayerTracker() = default;
-	PlayerTracker(int ammo, int health, int armor, sf::FloatRect player){
+	sf::Font MG;
 
+	
+
+	PlayerTracker() = default;
+	//PlayerTracker(int ammo, int health, int armor, sf::FloatRect player){
+	void setTracker(){
+		totAmmo.setCharacterSize(15);
+		totArmor.setCharacterSize(15);
+		totHealth.setCharacterSize(15);
+		stat.setSize(sf::Vector2f(200.f,100.f));
+		stat.setPosition(500.f,20.f);
+		stat.setFillColor(sf::Color::Transparent);
+		stat.setOutlineColor(sf::Color::Red);
+		stat.setOutlineThickness(5);
+		MG.loadFromFile("MGS2.ttf");
+		totAmmo.setFont(MG);
+		totArmor.setFont(MG);
+		totHealth.setFont(MG);
+
+		totAmmo.setFillColor(sf::Color::Red);
+		totArmor.setFillColor(sf::Color::Red);
+		totHealth.setFillColor(sf::Color::Red);
+		totAmmo.setPosition(510.f,35.f);
+		totArmor.setPosition(570.f,35.f);
+		totHealth.setPosition(630.f,35.f);
+		totAmmo.setString("Ammo: " + std::to_string(ammo));
+		totArmor.setString("Armor: " + std::to_string(armor));
+		totHealth.setString("Health: "+ std::to_string(health));
+	}
+	
+	void DrawTracker( sf::RenderTarget& ren )const
+	{
+		ren.draw(stat);
+		ren.draw(totAmmo);
+		ren.draw(totArmor);
+		ren.draw(totHealth);
 	}
 
 };
@@ -959,7 +1006,7 @@ public:
 
 int main()
 {
-    bool isShift = false;
+    //bool isShift = false;
 	// Create the main window
 	sf::RenderWindow window( sf::VideoMode( 800,600 ),"SFML window" );
 
@@ -968,9 +1015,12 @@ int main()
 		Char soldierCorpse( { 100.0f,200.0f } );
 		Char weapon ({20.0f,20.0f});
 		Char weaponEmpty ({20.0f,40.0f});
+
+		
 	}
 
 	Tex::clearPtr();
+	PlayerTracker status;
 
 	Char soldier( { 100.0f,100.0f } );
 	Char weapon ( { 10.0f, 100.0f } );
@@ -1026,18 +1076,7 @@ int main()
 			weapon.speed = 115.0f;
 			
 		}
-        // if (sf::Keyboard::isKeyPressed( sf::Keyboard::C) ){
-        //     //
-        //         prone++;
-        //         if (prone == 1)
-        //         {
-        //             soldier.Stealth(prone);
-        //             std::cout<<prone;
-        //         }
-           // soldier.speed = 100.0f;
-           
-               //crouch
-       // }
+       
 	   
        if ( sf::Keyboard::isKeyPressed( sf::Keyboard::C)){
 		
@@ -1124,6 +1163,8 @@ int main()
 		// Draw the sprite
 		soldier.Draw( window );
 		weapon.Draw( window );
+		status.setTracker();
+		status.DrawTracker( window );
 		// Update the window
 		window.display();
 	}
