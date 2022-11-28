@@ -258,18 +258,37 @@ private:
 		ShotgunCrouchRight= 25,
 		ShotgunCrouchDown= 26,
 
-		
+		Count
+	};
 
+	enum class RenderKitsIdx{
+		Health,
+		Armor,
+		Ammo,
+		Count
+	};
+
+	enum class RenderEnemyIdx{
+		
 		Count
 	};
 	
 		
-
+//Char class public:
 public:
 	bool crouch = false;
 	bool firing = false;
 	int gunValue;
     float speed = 115.0f;
+	
+
+	sf::FloatRect playerBounds = sprite.getGlobalBounds();
+	sf::FloatRect healthKit = health.getGlobalBounds();
+	sf::FloatRect armorKit = armor.getGlobalBounds();
+	sf::FloatRect ammoKit = ammo.getGlobalBounds();
+	sf::FloatRect projHit = projectile.getGlobalBounds();
+
+	
 	
 	std::map<RenderWeaponIdx, std::string> gunner;
 	std::map<RenderWeaponIdx, std::string>::iterator gunn;
@@ -389,6 +408,12 @@ public:
 		// gunViews[(int)RenderIdx::RifleCrawlDown] = View( 128,512,64,64,1,10.0f );
                 //
                     //add more below 
+
+					//new page assets // enemy sprites
+		kitViews[(int)RenderKitsIdx::Ammo] = View( 0,0,64,64,1,10.0f );
+		kitViews[(int)RenderKitsIdx::Health] = View( 0,64,64,64,1,10.0f );
+		kitViews[(int)RenderKitsIdx::Armor] = View( 0,128,64,64,1,10.0f );
+		
 	}
 		
 		
@@ -399,14 +424,10 @@ public:
 		rt.draw( gunSprite );
 	}
         //check which gun is called
-
-	void GunCheck(int gun){
-		gunValue = gun;
-		//std::cout << gun;
-	};
+	
 
 
-    void CheckWeapon(bool fire, bool crouching, const sf::Vector2f& dir)
+    void CheckWeapon(const sf::Vector2f& dir)
     {			//use gun only when called 123 seperate functions?
 
 		
@@ -448,12 +469,12 @@ public:
 		std::string isCrouching;
 		std::string weaponType;
 		std::string match;
-		fire = firing;
+		//fire = firing;
 		//gunValue = gun;
 		
 		//std::cout << gunValue-1;
-		crouching = crouch;
-		weaponType = weapon[gunValue-1];
+		//crouching = crouch;
+		weaponType = weapon[gunValue];
 
 		bool headingRight = dir.x > 0.0f;
         bool headingLeft = dir.x < 0.0f;
@@ -680,7 +701,8 @@ public:
 	  	
 		for(gunn = gunner.begin(); gunn != gunner.end(); gunn++){
 		if(match == gunn->second){
-			std::cout << gunn->second;
+			std::cout << gunn->second; // grab second value
+			currWepView = gunn->first; // grab first value 
 		}
 		}
 		//std::cout << weapon[gunValue-1];
@@ -690,6 +712,26 @@ public:
 		// 	i = std::find_if(pistolSort)
 		// }
     }
+	void GunCheck(int gun, const sf::Vector2f& dir)
+	{
+		gun = gunValue;
+		//std::cout << gun;
+	}
+
+	void CrouchCheck(bool crouched, const sf::Vector2f& dir)
+	{
+		crouched = crouch;
+		CheckWeapon(dir);
+	}
+
+	void FireCheck(bool fire, const sf::Vector2f& dir)
+	{
+		fire = firing;
+		CheckWeapon(dir);
+	}
+
+
+	
 
         //check toggle for auto fire
     void CheckIfAuto(int clicked)
@@ -895,9 +937,25 @@ private:
 	sf::Sprite gunSprite;
 	View views[int( RenderIdx::Count )];
 	View gunViews[int( RenderWeaponIdx::Count )]; // within Char
+	View kitViews[int( RenderKitsIdx::Count )];
 	RenderIdx currView = RenderIdx::IdleRight;
 	RenderWeaponIdx currWepView = RenderWeaponIdx::PistolRight;
 };
+class PlayerTracker{
+public:
+	int x;
+	int y;
+	int ammo = 50;
+	int health = 100;
+	int armor = 0;
+	std::vector<sf::RectangleShape>projectile;
+	PlayerTracker() = default;
+	PlayerTracker(int ammo, int health, int armor, sf::FloatRect player){
+
+	}
+
+};
+
 
 int main()
 {
@@ -943,24 +1001,30 @@ int main()
 		// make into switch cases?
 		sf::Vector2f dir = { 0.0f,0.0f };
         int autoCheck = 0;
-		int gun = 0;
-		int crouching = 1;
+		int gun;
+		//int crouching = 1;
         if (sf::Keyboard::isKeyPressed( sf::Keyboard::LControl) ){
             soldier.speed = 0.0f;
 			weapon.speed = 0.0f;
                 //aim
+			 soldier.CheckWeapon(dir);
         }
-        if (sf::Keyboard::isKeyPressed( sf::Keyboard::Space) ){
-            //soldier.speed = 0.0f;
-                //fire animations
-        }
+        if( sf::Keyboard::isKeyPressed( sf::Keyboard::Space) )
+		{
+			soldier.firing = true;
+			//soldier.CheckWeapon(dir);
+			//soldier.GunCheck(gun);
+			soldier.FireCheck(soldier.firing, dir);
+		}
         if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed( sf::Keyboard::LShift) ){
             soldier.speed = 200.0f;
 			weapon.speed = 200.0f;
+			 soldier.CheckWeapon(dir);
         }
 		else if (event.type == sf::Event::KeyReleased){
 			soldier.speed = 115.0f;
 			weapon.speed = 115.0f;
+			
 		}
         // if (sf::Keyboard::isKeyPressed( sf::Keyboard::C) ){
         //     //
@@ -979,77 +1043,74 @@ int main()
 		
 			soldier.crouch = true;
            //soldier.Stealth(prone);
+		    soldier.CrouchCheck(soldier.crouch, dir);
 			soldier.speed = 75.0f;
 			weapon.speed = 75.0f;
+			
 		}
 		if( sf::Keyboard::isKeyPressed( sf::Keyboard::Up ) )
 		{
 			dir.y -= 1.0f;
-			//soldier.CheckWeapon(gun, soldier.firing, soldier.crouch, dir);
+			 soldier.CheckWeapon(dir);
 		}
 		if( sf::Keyboard::isKeyPressed( sf::Keyboard::Down ) )
 		{
 			dir.y += 1.0f;
-			//soldier.CheckWeapon(gun, soldier.firing, soldier.crouch, dir);
+			 soldier.CheckWeapon(dir);
 		}
 		if( sf::Keyboard::isKeyPressed( sf::Keyboard::Left ) )
 		{
 			dir.x -= 1.0f;
-			//soldier.CheckWeapon(gun, soldier.firing, soldier.crouch, dir);
+			 soldier.CheckWeapon(dir);
 		}
 		if( sf::Keyboard::isKeyPressed( sf::Keyboard::Right ) )
 		{
 			dir.x += 1.0f;
-			//soldier.CheckWeapon(gun, soldier.firing, soldier.crouch, dir);
+			 soldier.CheckWeapon(dir);
 		}
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::W ) )
 		{
 			dir.y -= 1.0f;
-			//soldier.CheckWeapon(gun, soldier.firing, soldier.crouch, dir);
+			 soldier.CheckWeapon(dir);
 		}
 		if( sf::Keyboard::isKeyPressed( sf::Keyboard::S ) )
 		{
 			dir.y += 1.0f;
-			soldier.CheckWeapon(soldier.firing, soldier.crouch, dir);
+			soldier.CheckWeapon(dir);
 		}
 		if( sf::Keyboard::isKeyPressed( sf::Keyboard::A ) )
 		{
 			dir.x -= 1.0f;
-			//soldier.CheckWeapon(gun, soldier.firing, soldier.crouch, dir);
+			 soldier.CheckWeapon(dir);
 		}
 		if( sf::Keyboard::isKeyPressed( sf::Keyboard::D ) )
 		{
 			dir.x += 1.0f;
-			//soldier.CheckWeapon(gun, soldier.firing, soldier.crouch, dir);
+			 soldier.CheckWeapon(dir);
 		}
         // NUM check weapon
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num1) )
 		{
 		   gun = 1;
-           soldier.CheckWeapon(soldier.firing, soldier.crouch, dir);
-		   soldier.GunCheck(gun);
+           //soldier.CheckWeapon(dir);
+		   soldier.GunCheck(gun, dir) ;
 		}
 
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num2) )
 		{
 			gun = 2;
-			soldier.CheckWeapon(soldier.firing, soldier.crouch, dir);
-			soldier.GunCheck(gun);
+			//soldier.CheckWeapon(dir);
+			soldier.GunCheck(gun, dir);
            // soldier.CheckIfAuto(autoCheck);
 		}
 
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num3) )
 		{
 			gun = 3;
-			soldier.CheckWeapon(soldier.firing, soldier.crouch, dir);
-			soldier.GunCheck(gun);
+			//soldier.CheckWeapon(dir);
+			soldier.GunCheck(gun, dir);
 		}
-		if( sf::Keyboard::isKeyPressed( sf::Keyboard::Space) )
-		{
-			//gun = gun;
-			soldier.firing = true;
-			soldier.CheckWeapon(soldier.firing, soldier.crouch, dir);
-		}
+		
         
 		
 		soldier.SetDirection( dir );
