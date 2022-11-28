@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <string>
 #include <iostream>
+#include <thread>
 
 class Tex
 {
@@ -917,7 +918,7 @@ public:
 		// gunViews[int( currWepView )].Update( delta );
 		// gunViews[int( currWepView )].SpriteGun( gunSprite);
 		sprite.setPosition( currPos );
-		gunSprite.setPosition( currPos ); // if left flip/mirror sprite
+		//gunSprite.setPosition( currPos ); // if left flip/mirror sprite
 	}
 
 		void UpdateGun( float delta )
@@ -944,6 +945,7 @@ private:
 	sf::Vector2f velocity = {0.0f,0.0f};
 	sf::Sprite sprite;
 	sf::Sprite gunSprite;
+	sf::Sprite kit;
 	View views[int( RenderIdx::Count )];
 	View gunViews[int( RenderWeaponIdx::Count )]; // within Char
 	View kitViews[int( RenderKitsIdx::Count )];
@@ -963,7 +965,6 @@ public:
 	sf::RectangleShape stat;
 	std::vector<sf::RectangleShape>projectile;
 	sf::Font MG;
-
 	
 
 	PlayerTracker() = default;
@@ -985,14 +986,28 @@ public:
 		totAmmo.setFillColor(sf::Color::Red);
 		totArmor.setFillColor(sf::Color::Red);
 		totHealth.setFillColor(sf::Color::Red);
+		totAmmo.setOutlineColor(sf::Color::Yellow);
+		totArmor.setOutlineColor(sf::Color::White);
+		totHealth.setOutlineColor(sf::Color::Green);
+		totAmmo.setOutlineThickness(2);
+		totArmor.setOutlineThickness(2);
+		totHealth.setOutlineThickness(2);
+
 		totAmmo.setPosition(510.f,35.f);
 		totArmor.setPosition(570.f,35.f);
 		totHealth.setPosition(630.f,35.f);
 		totAmmo.setString("Ammo: " + std::to_string(ammo));
 		totArmor.setString("Armor: " + std::to_string(armor));
-		totHealth.setString("Health: "+ std::to_string(health));
+		totHealth.setString("Health: " + std::to_string(health));
 	}
-	
+	// void NapTime(unsigned int t){ . // take in weapon type and return sleep time per shot
+		
+	// }
+	 //d = std::chrono::milliseconds();
+	// void TrackAmmo(std::chrono::milliseconds()){ 
+	// 	ammo -= 1 / std::chrono::milliseconds();
+	// }
+
 	void DrawTracker( sf::RenderTarget& ren )const
 	{
 		ren.draw(stat);
@@ -1026,6 +1041,7 @@ int main()
 	Char weapon ( { 10.0f, 100.0f } );
 	// timepoint for delta time measurement
 	auto tp = std::chrono::steady_clock::now();
+	auto dl = std::chrono::steady_clock::now();
 
 	// Start the game loop
 	while( window.isOpen() )
@@ -1041,13 +1057,18 @@ int main()
 
 		// get delta
 		float delta;
+		float deltaLong;
+		auto dlong= std::chrono::milliseconds(900);
+		//float dlong = 4000;
 		{
 			const auto new_tp = std::chrono::steady_clock::now();
 			delta = std::chrono::duration<float>( new_tp - tp ).count();
 			tp = new_tp;
+
+			
+
 		}
 
-       
 		// make into switch cases?
 		sf::Vector2f dir = { 0.0f,0.0f };
         int autoCheck = 0;
@@ -1057,7 +1078,7 @@ int main()
             soldier.speed = 0.0f;
 			weapon.speed = 0.0f;
                 //aim
-			 soldier.CheckWeapon(dir);
+			soldier.CheckWeapon(dir);
         }
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::Space) )
 		{
@@ -1065,7 +1086,37 @@ int main()
 			//soldier.CheckWeapon(dir);
 			//soldier.GunCheck(gun);
 			soldier.FireCheck(soldier.firing, dir);
-		}
+			//status.TrackAmmo(deltaLong);
+			const auto new_dl = std::chrono::steady_clock::now();
+			//std::this_thread::sleep_for(dlong);
+			deltaLong = std::chrono::duration<float>(  new_dl - dl  ).count();
+			dl = new_dl; //+ dlong;
+			status.ammo -= 1 ;
+			status.setTracker();
+			status.DrawTracker( window );
+			}
+		
+
+		//while (sf::Keyboard::isKeyPressed( sf::Keyboard::Space))
+		//{
+			//float second = .998;
+			//this_thread::sleep_for(chrono::milliseconds(1000));
+			
+			//float countFire;
+			//const auto fireSet = std::chrono::steady_clock::now();
+			//status.NapTime(0.99);
+			//std::this_thread::sleep_for(std::chrono::milliseconds(150));
+			//auto fireStop = std::chrono::steady_clock::now();
+			//countFire =  std::chrono::duration<float>(fireSet - fireStop).count(); 
+
+			//if(countFire = float_sec){
+			//soldier.Update(delta);
+			
+			
+		    
+			
+			//}
+		//}
         if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed( sf::Keyboard::LShift) ){
             soldier.speed = 200.0f;
 			weapon.speed = 200.0f;
@@ -1155,17 +1206,20 @@ int main()
 		soldier.SetDirection( dir );
 		weapon.SetDirection( dir );
 
-		// update model
+		// update 
 		soldier.Update( delta );
 		weapon.UpdateGun( delta );
-		// Clear screen
+		// clear 
 		window.clear();
-		// Draw the sprite
+		// draw
+		status.DrawTracker( window );
 		soldier.Draw( window );
 		weapon.Draw( window );
-		status.setTracker();
+		status.setTracker(); // track status of player
 		status.DrawTracker( window );
-		// Update the window
+		
+		
+		// update window
 		window.display();
 	}
 	return EXIT_SUCCESS;
