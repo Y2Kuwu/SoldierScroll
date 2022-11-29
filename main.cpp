@@ -328,8 +328,11 @@ public:
     float speed = 115.0f;
 	float bulletSpeed = 140.0f;
 	
-	sf::RectangleShape bullet;
+	std::vector<sf::RectangleShape> bullets;
+	//std::vector<sf::RectangleShape>::iterator b;
 
+	sf::RectangleShape bullet;
+	
 
 	sf::FloatRect playerBounds = sprite.getGlobalBounds();
 	//sf::FloatRect healthKit = health.getGlobalBounds();
@@ -464,13 +467,12 @@ public:
 		kitViews[(int)RenderKitsIdx::Armor] = View( 0,128,64,64,1,10.0f );
 		
 	}
-		
-		
 
 	void Draw( sf::RenderTarget& rt ) const
 	{
 		rt.draw( sprite );
 		rt.draw( gunSprite );
+		rt.draw( bullet );
 	}
         //check which gun is called
 	
@@ -791,14 +793,57 @@ public:
             }
         }
     }
+		//was orginally void may need to go back and rework
+		//scrap this
+//    std::vector<sf::RectangleShape>::iterator MakeLead(int mag){//int magSize ){
+// 		bullet.setSize(sf::Vector2f(10 , 5));
+// 		bullet.setFillColor(sf::Color::Red);
+// 		bullet.setOutlineColor(sf::Color::White);
+// 		bullet.setOutlineThickness(2);
+// 		bullets.reserve(mag); 
+// 		bullets.push_back(bullet);
+// 		std::cout << sprLoc.x; //location was valid NO LONGER VALID
+// 		std::cout << sprLoc.y; //location was valid
+// 		for(b = bullets.begin(); b < bullets.end(); b++)
+// 		{
+// 		return b;
+// 		}
+//    }
+		// void Make(){
+		// bullet.setSize(sf::Vector2f(50 , 50));
+		// //bullet.setPosition(sprLoc.x, sprLoc.y);
+		// bullet.setPosition(50,50);
+		// bullet.setFillColor(sf::Color::Red);
+		// bullet.setOutlineColor(sf::Color::White);
+		// bullet.setOutlineThickness(2);
+		// }
 
-   void MakeLead(int mag){//int magSize ){
-		std::vector<sf::RectangleShape> bullets;
-		bullets.reserve(mag); 
+		// void DrawBullet(sf::RenderTarget& ren){
+		// 	ren.draw(bullet);
+		// }
+
+		void MakeLead(int mag){//int magSize ){
 		
-		std::cout << sprLoc.x; 
-		std::cout << sprLoc.y;
-   }
+		//bullets.reserve(mag); 
+		
+		//std::cout << sprLoc.x; //location was valid NO LONGER VALID
+		//std::cout << sprLoc.y; //location was valid
+		//for(b = bullets.begin(); b < bullets.end(); b++)
+		//for (int b = 0; b < bullets.size(); b++){
+		//bullets.push_back(bullet);
+		bullet.setSize(sf::Vector2f(10 , 5));
+		bullet.setPosition(sprLoc.x, sprLoc.y);
+		bullet.setPosition(120,120);
+		bullet.setFillColor(sf::Color::Black);
+		bullet.setOutlineColor(sf::Color::White);
+		bullet.setOutlineThickness(2);
+		//while (mag -= 1){
+				//rt.draw(bullet);
+			//}
+		//}
+		}
+		
+   
 
 	
 
@@ -936,8 +981,12 @@ public:
 		gunViews[int( currWepView )].SpriteGun( gunSprite);
 		//sprite.setPosition( currPos );
 		gunSprite.setPosition( currPos ); // if left flip/mirror sprite
+		sprLoc = gunSprite.getPosition();
 	}
 	
+	//public location of gunSprite for bullet origin/path
+	sf::Vector2f sprLoc; //= gunSprite.getPosition(); //get pos for weapon bullet origin
+
 private:
 	
     // acting as bool // change animation cycles
@@ -945,7 +994,7 @@ private:
     int proneValue;
     int autoValue;
     //
-	sf::Vector2f sprLoc = gunSprite.getPosition(); //get pos for weapon bullet origin
+	
 
 	sf::Vector2f currPos;
 	sf::Vector2f velocity = {0.0f,0.0f};
@@ -1102,7 +1151,7 @@ public:
 		//std::cout << ammo;
 	}
 
-	void DrawTracker( sf::RenderTarget& ren )const
+	void DrawTracker( sf::RenderTarget& ren)const
 	{
 		ren.draw(stat);
 		ren.draw(totAmmo);
@@ -1118,6 +1167,7 @@ public:
 
 int main()
 {
+	sf::RectangleShape bullet;
     //bool isShift = false;
 	// Create the main window
 	sf::RenderWindow window( sf::VideoMode( 800,600 ),"SFML window" );
@@ -1188,8 +1238,12 @@ int main()
 			
 			status.TrackAmmo(gun);
 			//std::cout << status.ammo; total quantity 
+			
+			weapon.MakeLead(status.ammo); //needs rework
+				//get info and pass to Draw()
+			//
 			status.setTracker();
-			status.DrawTracker( window );
+			status.DrawTracker( window);
 			}
 		
 
@@ -1308,7 +1362,7 @@ int main()
 		// update 
 		soldier.Update( delta );
 		weapon.UpdateGun( delta );
-		//weapon.MakeLead();
+		
 		// clear 
 		window.clear();
 		// draw
@@ -1317,7 +1371,6 @@ int main()
 		weapon.Draw( window );
 		status.setTracker(); // track status of player
 		status.DrawTracker( window );
-		
 		
 		// update window
 		window.display();
