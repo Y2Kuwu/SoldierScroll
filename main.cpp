@@ -6,7 +6,8 @@
 #include <unordered_map>
 #include <string>
 #include <iostream>
-#include <thread>
+#include <stdio.h>
+#include <time.h>
 
 class Tex
 {
@@ -959,6 +960,13 @@ public:
 	int ammo = 50;
 	int health = 100;
 	int armor = 0;
+
+	int timeCount = 1;
+	double timer = 0;
+	const double threeQuarter = .75;
+	clock_t time1 = clock();
+	clock_t time2 = time1;
+
 	sf::Text totAmmo;
 	sf::Text totArmor;
 	sf::Text totHealth;
@@ -970,6 +978,8 @@ public:
 	PlayerTracker() = default;
 	//PlayerTracker(int ammo, int health, int armor, sf::FloatRect player){
 	void setTracker(){
+		
+
 		totAmmo.setCharacterSize(15);
 		totArmor.setCharacterSize(15);
 		totHealth.setCharacterSize(15);
@@ -1007,6 +1017,18 @@ public:
 	// void TrackAmmo(std::chrono::milliseconds()){ 
 	// 	ammo -= 1 / std::chrono::milliseconds();
 	// }
+	void trackAmmo(){
+		time1 = clock(); 
+		timer += (double)(time1 - time2);
+		time2 = time1;
+
+		if(timer > (double)(threeQuarter * CLOCKS_PER_SEC/2))
+		{
+			timer -= (double)(threeQuarter * CLOCKS_PER_SEC/2);
+			timeCount++;
+			ammo -= 1;
+		}
+	}
 
 	void DrawTracker( sf::RenderTarget& ren )const
 	{
@@ -1091,7 +1113,7 @@ int main()
 			//std::this_thread::sleep_for(dlong);
 			deltaLong = std::chrono::duration<float>(  new_dl - dl  ).count();
 			dl = new_dl; //+ dlong;
-			status.ammo -= 1 ;
+			status.trackAmmo();
 			status.setTracker();
 			status.DrawTracker( window );
 			}
