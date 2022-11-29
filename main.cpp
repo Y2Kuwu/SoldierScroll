@@ -792,7 +792,13 @@ public:
         }
     }
 
-   
+   void MakeLead(int mag){//int magSize ){
+		std::vector<sf::RectangleShape> bullets;
+		bullets.reserve(mag); 
+		
+		std::cout << sprLoc.x; 
+		std::cout << sprLoc.y;
+   }
 
 	
 
@@ -939,6 +945,7 @@ private:
     int proneValue;
     int autoValue;
     //
+	sf::Vector2f sprLoc = gunSprite.getPosition(); //get pos for weapon bullet origin
 
 	sf::Vector2f currPos;
 	sf::Vector2f velocity = {0.0f,0.0f};
@@ -960,7 +967,7 @@ public:
 	int ammo; // array or vector?
 	int ammoPIS = 25;
 	int ammoSG = 5;
-	int ammoRIF = 25;
+	int ammoRIF = 50;
 	int health = 100;
 	int armor = 0;
 
@@ -1180,6 +1187,7 @@ int main()
 			
 			
 			status.TrackAmmo(gun);
+			//std::cout << status.ammo; total quantity 
 			status.setTracker();
 			status.DrawTracker( window );
 			}
@@ -1208,7 +1216,7 @@ int main()
         if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed( sf::Keyboard::LShift) ){
             soldier.speed = 200.0f;
 			weapon.speed = 200.0f;
-			 soldier.CheckWeapon(dir);
+			soldier.CheckWeapon(dir);
         }
 		else if (event.type == sf::Event::KeyReleased){
 			soldier.speed = 115.0f;
@@ -1300,6 +1308,7 @@ int main()
 		// update 
 		soldier.Update( delta );
 		weapon.UpdateGun( delta );
+		//weapon.MakeLead();
 		// clear 
 		window.clear();
 		// draw
