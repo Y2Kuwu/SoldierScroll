@@ -326,7 +326,10 @@ public:
 	bool firing = false;
 	int gunValue;
     float speed = 115.0f;
+	float bulletSpeed = 140.0f;
 	
+	sf::RectangleShape bullet;
+
 
 	sf::FloatRect playerBounds = sprite.getGlobalBounds();
 	//sf::FloatRect healthKit = health.getGlobalBounds();
@@ -743,7 +746,7 @@ public:
 		//match = weaponType + isCrouching + direction;
 		//std::cout << match;
 
-		
+		//ANIMATIONS HERE//
 	  	
 		for(gunn = gunner.begin(); gunn != gunner.end(); gunn++){
 		if(match == gunn->second){
@@ -796,11 +799,6 @@ public:
 	//
 	void SetDirection( const sf::Vector2f& dir )
 	{
-       
-		
-      
-		
-
 		if( dir.x > 0.0f ) //check for gunValue and proneValue
 		{
 			currView = RenderIdx::GoRight;
@@ -957,17 +955,28 @@ class PlayerTracker{
 public:
 	int x;
 	int y;
-	int ammo = 50;
+	
+
+	int ammo; // array or vector?
+	int ammoPIS = 25;
+	int ammoSG = 5;
+	int ammoRIF = 25;
 	int health = 100;
 	int armor = 0;
 
 	int timeCount = 1;
 	double timer = 0;
-	const double threeQuarter = .75;
+
+	//1 2 3
+	double threeQuarter; //= .75; // adjust this for increments or add var below and divide by PER_SECS var
+	
 	clock_t time1 = clock();
 	clock_t time2 = time1;
 
 	sf::Text totAmmo;
+	sf::Text totAmmoPIS;//
+	sf::Text totAmmoRIF;//
+	sf::Text totAmmoSG;//
 	sf::Text totArmor;
 	sf::Text totHealth;
 	sf::RectangleShape stat;
@@ -978,9 +987,10 @@ public:
 	PlayerTracker() = default;
 	//PlayerTracker(int ammo, int health, int armor, sf::FloatRect player){
 	void setTracker(){
-		
-
 		totAmmo.setCharacterSize(15);
+		totAmmoPIS.setCharacterSize(10);
+		totAmmoSG.setCharacterSize(10);
+		totAmmoRIF.setCharacterSize(10);
 		totArmor.setCharacterSize(15);
 		totHealth.setCharacterSize(15);
 		stat.setSize(sf::Vector2f(200.f,100.f));
@@ -990,23 +1000,43 @@ public:
 		stat.setOutlineThickness(5);
 		MG.loadFromFile("MGS2.ttf");
 		totAmmo.setFont(MG);
+		totAmmoPIS.setFont(MG);
+		totAmmoSG.setFont(MG);
+		totAmmoRIF.setFont(MG);
 		totArmor.setFont(MG);
 		totHealth.setFont(MG);
 
 		totAmmo.setFillColor(sf::Color::Red);
+
+		totAmmoPIS.setFillColor(sf::Color::Red);
+		totAmmoRIF.setFillColor(sf::Color::Red);
+		totAmmoSG.setFillColor(sf::Color::Red);
+
 		totArmor.setFillColor(sf::Color::Red);
 		totHealth.setFillColor(sf::Color::Red);
-		totAmmo.setOutlineColor(sf::Color::Yellow);
-		totArmor.setOutlineColor(sf::Color::White);
-		totHealth.setOutlineColor(sf::Color::Green);
-		totAmmo.setOutlineThickness(2);
-		totArmor.setOutlineThickness(2);
-		totHealth.setOutlineThickness(2);
+
+		//totAmmo.setOutlineColor(sf::Color::Yellow);
+		//totArmor.setOutlineColor(sf::Color::White);
+		//totHealth.setOutlineColor(sf::Color::Green);
+		//change color on damage, pickup, etc.
+		//totAmmo.setOutlineThickness(2);
+		//totArmor.setOutlineThickness(2);
+		//totHealth.setOutlineThickness(2);
 
 		totAmmo.setPosition(510.f,35.f);
+
+		totAmmoPIS.setPosition(510.f,50.f);
+		totAmmoRIF.setPosition(510.f,60.f);
+		totAmmoSG.setPosition(510.f,70.f);
+
 		totArmor.setPosition(570.f,35.f);
 		totHealth.setPosition(630.f,35.f);
-		totAmmo.setString("Ammo: " + std::to_string(ammo));
+		totAmmo.setString("Ammo:");
+
+		totAmmoPIS.setString("Pistol: " + std::to_string(ammoPIS));
+		totAmmoRIF.setString("Rifle: " + std::to_string(ammoRIF));
+		totAmmoSG.setString("ShotGun: " + std::to_string(ammoSG));
+
 		totArmor.setString("Armor: " + std::to_string(armor));
 		totHealth.setString("Health: " + std::to_string(health));
 	}
@@ -1017,23 +1047,61 @@ public:
 	// void TrackAmmo(std::chrono::milliseconds()){ 
 	// 	ammo -= 1 / std::chrono::milliseconds();
 	// }
-	void trackAmmo(){
+	void TrackAllAmmo(int ps , int rf, int sg){
+		ammo = ps + rf + sg;
+	}
+
+	void TrackAmmo(int g){
+		// if(gun == 1){
+		// 	threeQuarter = .75;
+		// 	ammoPIS;
+		// }
+		// if(gun == 2){
+		// 	threeQuarter = .2;
+		// 	ammoRIF;
+		// }
+		// if(gun == 3){
+		// 	threeQuarter = 1.2;
+		// 	ammoSG;
+		// }
+		//std::cout << gun;
+		
 		time1 = clock(); 
 		timer += (double)(time1 - time2);
 		time2 = time1;
 
-		if(timer > (double)(threeQuarter * CLOCKS_PER_SEC/2))
+		if(timer > (double)(threeQuarter * CLOCKS_PER_SEC) && g == 1)
 		{
-			timer -= (double)(threeQuarter * CLOCKS_PER_SEC/2);
+			threeQuarter = .75;
+			timer -= (double)(threeQuarter * CLOCKS_PER_SEC);
 			timeCount++;
-			ammo -= 1;
+			ammoPIS -= 1; // ammo type 1 , 2 , 3
 		}
+		else if(timer > (double)(threeQuarter * CLOCKS_PER_SEC) && g == 2)
+		{
+			threeQuarter = .2;
+			timer -= (double)(threeQuarter * CLOCKS_PER_SEC);
+			timeCount++;
+			ammoRIF -= 1; // ammo type 1 , 2 , 3
+		}
+		else if(timer > (double)(threeQuarter * CLOCKS_PER_SEC) && g == 3)
+		{
+			threeQuarter = .95;
+			timer -= (double)(threeQuarter * CLOCKS_PER_SEC);
+			timeCount++;
+			ammoSG -= 1; // ammo type 1 , 2 , 3
+		}
+		TrackAllAmmo(ammoPIS , ammoRIF, ammoSG);
+		//std::cout << ammo;
 	}
 
 	void DrawTracker( sf::RenderTarget& ren )const
 	{
 		ren.draw(stat);
 		ren.draw(totAmmo);
+		ren.draw(totAmmoPIS);
+		ren.draw(totAmmoRIF);
+		ren.draw(totAmmoSG);
 		ren.draw(totArmor);
 		ren.draw(totHealth);
 	}
@@ -1108,12 +1176,10 @@ int main()
 			//soldier.CheckWeapon(dir);
 			//soldier.GunCheck(gun);
 			soldier.FireCheck(soldier.firing, dir);
-			//status.TrackAmmo(deltaLong);
-			const auto new_dl = std::chrono::steady_clock::now();
-			//std::this_thread::sleep_for(dlong);
-			deltaLong = std::chrono::duration<float>(  new_dl - dl  ).count();
-			dl = new_dl; //+ dlong;
-			status.trackAmmo();
+			//const auto new_dl = std::chrono::steady_clock::now();
+			
+			
+			status.TrackAmmo(gun);
 			status.setTracker();
 			status.DrawTracker( window );
 			}
@@ -1205,6 +1271,7 @@ int main()
 		{
 		   gun = 1;
            //soldier.CheckWeapon(dir);
+		
 		   soldier.GunCheck(gun, dir) ;
 		}
 
@@ -1213,6 +1280,7 @@ int main()
 			gun = 2;
 			//soldier.CheckWeapon(dir);
 			soldier.GunCheck(gun, dir);
+		
            // soldier.CheckIfAuto(autoCheck);
 		}
 
@@ -1221,6 +1289,7 @@ int main()
 			gun = 3;
 			//soldier.CheckWeapon(dir);
 			soldier.GunCheck(gun, dir);
+		
 		}
 		
         
