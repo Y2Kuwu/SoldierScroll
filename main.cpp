@@ -320,18 +320,36 @@ private:
 	};
 	
 		
-//Char class public:
+//keep public for now
 public:
+	bool directionBool;
+	bool veclocityBool;
 	bool crouch = false;
 	bool firing = false;
 	int gunValue;
     float speed = 115.0f;
 	float bulletSpeed = 140.0f;
-	
+	sf::Vector2f sprLoc; //= gunSprite.getPosition(); //get pos for weapon bullet origin
 	std::vector<sf::RectangleShape> bullets;
-	//std::vector<sf::RectangleShape>::iterator b;
-
+	std::vector<sf::RectangleShape>::iterator b;
 	sf::RectangleShape bullet;
+
+	void DirShare(sf::Vector2f& dir){
+	velocity = dir * speed;
+	bool headingRight = dir.x > 0.0f;
+    bool headingLeft = dir.x < 0.0f;
+    bool headingUp = dir.y < 0.0f;
+    bool headingDown = dir.y > 0.0f;
+    bool idlRight = velocity.x > 0.0f;
+    bool idlLeft = velocity.x < 0.0f;
+    bool idlUp = velocity.y < 0.0f;
+    bool idlDown = velocity.y > 0.0f;
+	//std::vector<bool>direct = {headingDown,headingLeft,headingRight,headingUp};
+	//std::vector<bool>vel = {idlDown,idlLeft,idlRight,idlUp};
+	if(true){
+		
+	}
+	}
 	
 
 	sf::FloatRect playerBounds = sprite.getGlobalBounds();
@@ -467,20 +485,16 @@ public:
 		kitViews[(int)RenderKitsIdx::Armor] = View( 0,128,64,64,1,10.0f );
 		
 	}
-
 	void Draw( sf::RenderTarget& rt ) const
 	{
 		rt.draw( sprite );
 		rt.draw( gunSprite );
-		rt.draw( bullet );
 	}
+
         //check which gun is called
-	
-
-
     void CheckWeapon(const sf::Vector2f& dir)
-    {			//use gun only when called 123 seperate functions?
-
+    {
+		direct = dir;
 		
 		gunner[RenderWeaponIdx::PistolFireUp] = "PistolFireUp";
 		gunner[RenderWeaponIdx::PistolFireDown] ="PistolFireDown";
@@ -527,17 +541,10 @@ public:
 		//crouching = crouch;
 		weaponType = weapon[gunValue];
 
-		bool headingRight = dir.x > 0.0f;
-        bool headingLeft = dir.x < 0.0f;
-        bool headingUp = dir.y < 0.0f;
-        bool headingDown = dir.y > 0.0f;
-        bool idlRight = velocity.x > 0.0f;
-        bool idlLeft = velocity.x < 0.0f;
-        bool idlUp = velocity.y < 0.0f;
-        bool idlDown = velocity.y > 0.0f;
+		
 
 		//velocity = dir * speed;
-
+// WEAPON SPRITE ANIMATIONS
 		//////// MOVING WHILE NOT CROUCHING OR FIRING
 		if(headingRight && firing == false && crouch == false)
 		{
@@ -668,7 +675,6 @@ public:
 			isFiring = "Fire";
 			match = weaponType + isCrouching + direction;
 		}
-
 		//
 		else{
 			///////CROUCHING AND FIRING WHILE MOVING
@@ -706,14 +712,12 @@ public:
 			if(headingRight && crouch == false && firing == true)
 		{
 			direction = "Right";
-			//isCrouching = "Crouch";
 			isFiring = "Fire";
 			match = weaponType + isFiring + direction;
 		}
 		else if(headingLeft && crouch == false && firing == true)
 		{
 			direction = "Right"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
-			//isCrouching = "Crouch";
 			isFiring = "Fire";
 			match = weaponType + isFiring + direction;
 			//gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
@@ -738,15 +742,6 @@ public:
 		}
 		}
 		
-		 //gunvalue is reading accurately -1
-		//match = weaponType + isFiring + isCrouching + direction;
-
-		//std::cout<< weapon[gunValue-1];
-		
-		//match = weaponType + isFiring + direction;
-		//match = weaponType + direction;
-		//match = weaponType + isCrouching + direction;
-		//std::cout << match;
 
 		//ANIMATIONS HERE//
 	  	
@@ -766,7 +761,6 @@ public:
 	void GunCheck(int gun, const sf::Vector2f& dir)
 	{
 		gun = gunValue;
-		//std::cout << gun;
 	}
 
 	void CrouchCheck(bool crouched, const sf::Vector2f& dir)
@@ -781,9 +775,6 @@ public:
 		CheckWeapon(dir);
 	}
 
-
-	
-
         //check toggle for auto fire
     void CheckIfAuto(int clicked)
     {
@@ -793,54 +784,26 @@ public:
             }
         }
     }
-		//was orginally void may need to go back and rework
-		//scrap this
-//    std::vector<sf::RectangleShape>::iterator MakeLead(int mag){//int magSize ){
-// 		bullet.setSize(sf::Vector2f(10 , 5));
-// 		bullet.setFillColor(sf::Color::Red);
-// 		bullet.setOutlineColor(sf::Color::White);
-// 		bullet.setOutlineThickness(2);
-// 		bullets.reserve(mag); 
-// 		bullets.push_back(bullet);
-// 		std::cout << sprLoc.x; //location was valid NO LONGER VALID
-// 		std::cout << sprLoc.y; //location was valid
-// 		for(b = bullets.begin(); b < bullets.end(); b++)
-// 		{
-// 		return b;
-// 		}
-//    }
-		// void Make(){
-		// bullet.setSize(sf::Vector2f(50 , 50));
-		// //bullet.setPosition(sprLoc.x, sprLoc.y);
-		// bullet.setPosition(50,50);
-		// bullet.setFillColor(sf::Color::Red);
-		// bullet.setOutlineColor(sf::Color::White);
-		// bullet.setOutlineThickness(2);
-		// }
+		void LeadPos(sf::RectangleShape lead)
+		{
+			//lead.setPosition(50, 50);
+			lead.setPosition(sprLoc.x, sprLoc.y);
+		}
 
-		// void DrawBullet(sf::RenderTarget& ren){
-		// 	ren.draw(bullet);
-		// }
-
-		void MakeLead(int mag){//int magSize ){
+		void CountLead(int mag, sf::RectangleShape lead){//int magSize ){
 		
-		//bullets.reserve(mag); 
-		
-		//std::cout << sprLoc.x; //location was valid NO LONGER VALID
-		//std::cout << sprLoc.y; //location was valid
-		//for(b = bullets.begin(); b < bullets.end(); b++)
-		//for (int b = 0; b < bullets.size(); b++){
-		//bullets.push_back(bullet);
-		bullet.setSize(sf::Vector2f(10 , 5));
-		bullet.setPosition(sprLoc.x, sprLoc.y);
-		bullet.setPosition(120,120);
-		bullet.setFillColor(sf::Color::Black);
-		bullet.setOutlineColor(sf::Color::White);
-		bullet.setOutlineThickness(2);
+		bullet = lead;
+		bullets.reserve(mag); 
+		//while(mag-= 1 && mag != 0){
+		bullets.push_back(lead);
+		//for(b = bullets.begin(); b != bullets.end(); b++){
+		//for (auto b : bullets){
+			//b = bullet;
 		//while (mag -= 1){
 				//rt.draw(bullet);
 			//}
 		//}
+	//	}
 		}
 		
    
@@ -981,11 +944,11 @@ public:
 		gunViews[int( currWepView )].SpriteGun( gunSprite);
 		//sprite.setPosition( currPos );
 		gunSprite.setPosition( currPos ); // if left flip/mirror sprite
-		sprLoc = gunSprite.getPosition();
+		sprLoc = gunSprite.getPosition(); // bullet origin for now?
 	}
 	
-	//public location of gunSprite for bullet origin/path
-	sf::Vector2f sprLoc; //= gunSprite.getPosition(); //get pos for weapon bullet origin
+	
+	
 
 private:
 	
@@ -1007,6 +970,14 @@ private:
 	RenderIdx currView = RenderIdx::IdleRight;
 	RenderWeaponIdx currWepView = RenderWeaponIdx::PistolRight;
 };
+
+class Lead : Char{
+	public:
+
+
+};
+
+
 class PlayerTracker{
 public:
 	int x;
@@ -1096,31 +1067,12 @@ public:
 		totArmor.setString("Armor: " + std::to_string(armor));
 		totHealth.setString("Health: " + std::to_string(health));
 	}
-	// void NapTime(unsigned int t){ . // take in weapon type and return sleep time per shot
-		
-	// }
-	 //d = std::chrono::milliseconds();
-	// void TrackAmmo(std::chrono::milliseconds()){ 
-	// 	ammo -= 1 / std::chrono::milliseconds();
-	// }
+	
 	void TrackAllAmmo(int ps , int rf, int sg){
 		ammo = ps + rf + sg;
 	}
 
 	void TrackAmmo(int g){
-		// if(gun == 1){
-		// 	threeQuarter = .75;
-		// 	ammoPIS;
-		// }
-		// if(gun == 2){
-		// 	threeQuarter = .2;
-		// 	ammoRIF;
-		// }
-		// if(gun == 3){
-		// 	threeQuarter = 1.2;
-		// 	ammoSG;
-		// }
-		//std::cout << gun;
 		
 		time1 = clock(); 
 		timer += (double)(time1 - time2);
@@ -1167,9 +1119,9 @@ public:
 
 int main()
 {
-	sf::RectangleShape bullet;
-    //bool isShift = false;
-	// Create the main window
+	
+
+	
 	sf::RenderWindow window( sf::VideoMode( 800,600 ),"SFML window" );
 
 	{
@@ -1180,12 +1132,23 @@ int main()
 
 		
 	}
+	
 
 	Tex::clearPtr();
 	PlayerTracker status;
 
 	Char soldier( { 100.0f,100.0f } );
 	Char weapon ( { 10.0f, 100.0f } );
+
+	//weapon.bullet;
+	sf::RectangleShape bulletStream;
+	//weapon.bullet = bulletStream;
+		// assign position
+	bulletStream.setSize(sf::Vector2f(20 , 10));
+	bulletStream.setFillColor(sf::Color::Red);
+	bulletStream.setOutlineColor(sf::Color::White);
+	bulletStream.setOutlineThickness(2);
+
 	// timepoint for delta time measurement
 	auto tp = std::chrono::steady_clock::now();
 	auto dl = std::chrono::steady_clock::now();
@@ -1238,35 +1201,17 @@ int main()
 			
 			status.TrackAmmo(gun);
 			//std::cout << status.ammo; total quantity 
-			
-			weapon.MakeLead(status.ammo); //needs rework
+			weapon.CountLead(status.ammo, bulletStream); //only collecting total and passing
+			weapon.LeadPos(bulletStream);
+			//for(weapon.b = weapon.bullets.begin(); weapon.b != weapon.bullets.end(); ++weapon.b){
+			//(*weapon.b);
 				//get info and pass to Draw()
+			
 			//
 			status.setTracker();
 			status.DrawTracker( window);
 			}
 		
-
-		//while (sf::Keyboard::isKeyPressed( sf::Keyboard::Space))
-		//{
-			//float second = .998;
-			//this_thread::sleep_for(chrono::milliseconds(1000));
-			
-			//float countFire;
-			//const auto fireSet = std::chrono::steady_clock::now();
-			//status.NapTime(0.99);
-			//std::this_thread::sleep_for(std::chrono::milliseconds(150));
-			//auto fireStop = std::chrono::steady_clock::now();
-			//countFire =  std::chrono::duration<float>(fireSet - fireStop).count(); 
-
-			//if(countFire = float_sec){
-			//soldier.Update(delta);
-			
-			
-		    
-			
-			//}
-		//}
         if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed( sf::Keyboard::LShift) ){
             soldier.speed = 200.0f;
 			weapon.speed = 200.0f;
@@ -1358,7 +1303,7 @@ int main()
 		
 		soldier.SetDirection( dir );
 		weapon.SetDirection( dir );
-
+		weapon.DirShare(dir);
 		// update 
 		soldier.Update( delta );
 		weapon.UpdateGun( delta );
@@ -1371,7 +1316,6 @@ int main()
 		weapon.Draw( window );
 		status.setTracker(); // track status of player
 		status.DrawTracker( window );
-		
 		// update window
 		window.display();
 	}
