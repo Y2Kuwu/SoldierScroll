@@ -157,6 +157,17 @@ public:
 			RendNext();
 		}
 	}
+	void UpdateProj( float delta )
+	{
+		{
+		time += delta;
+		while( time >= wait )
+		{
+			time -= wait;
+		}
+	}
+	}
+
 private:
 	void RendNext()
 	{
@@ -322,34 +333,17 @@ private:
 		
 //keep public for now
 public:
-	bool directionBool;
-	bool veclocityBool;
 	bool crouch = false;
 	bool firing = false;
 	int gunValue;
     float speed = 115.0f;
 	float bulletSpeed = 140.0f;
 	sf::Vector2f sprLoc; //= gunSprite.getPosition(); //get pos for weapon bullet origin
+	sf::Vector2f sprBul; //= recBull.getPosition();  will need to be changed
 	std::vector<sf::RectangleShape> bullets;
 	std::vector<sf::RectangleShape>::iterator b;
 	sf::RectangleShape bullet;
 
-	void DirShare(sf::Vector2f& dir){
-	velocity = dir * speed;
-	bool headingRight = dir.x > 0.0f;
-    bool headingLeft = dir.x < 0.0f;
-    bool headingUp = dir.y < 0.0f;
-    bool headingDown = dir.y > 0.0f;
-    bool idlRight = velocity.x > 0.0f;
-    bool idlLeft = velocity.x < 0.0f;
-    bool idlUp = velocity.y < 0.0f;
-    bool idlDown = velocity.y > 0.0f;
-	//std::vector<bool>direct = {headingDown,headingLeft,headingRight,headingUp};
-	//std::vector<bool>vel = {idlDown,idlLeft,idlRight,idlUp};
-	if(true){
-		
-	}
-	}
 	
 
 	sf::FloatRect playerBounds = sprite.getGlobalBounds();
@@ -489,12 +483,21 @@ public:
 	{
 		rt.draw( sprite );
 		rt.draw( gunSprite );
+		rt.draw( bullet );
 	}
 
         //check which gun is called
     void CheckWeapon(const sf::Vector2f& dir)
     {
-		direct = dir;
+
+	bool headingRight = dir.x > 0.0f;
+    bool headingLeft = dir.x < 0.0f;
+    bool headingUp = dir.y < 0.0f;
+    bool headingDown = dir.y > 0.0f;
+    bool idlRight = velocity.x > 0.0f;
+    bool idlLeft = velocity.x < 0.0f;
+    bool idlUp = velocity.y < 0.0f;
+    bool idlDown = velocity.y > 0.0f;
 		
 		gunner[RenderWeaponIdx::PistolFireUp] = "PistolFireUp";
 		gunner[RenderWeaponIdx::PistolFireDown] ="PistolFireDown";
@@ -934,7 +937,7 @@ public:
 		//gunSprite.setPosition( currPos ); // if left flip/mirror sprite
 	}
 
-		void UpdateGun( float delta )
+	void UpdateGun( float delta )
 	{
 		currPos += velocity * delta;
 		//views[int( currView )].Update( delta );
@@ -945,6 +948,47 @@ public:
 		//sprite.setPosition( currPos );
 		gunSprite.setPosition( currPos ); // if left flip/mirror sprite
 		sprLoc = gunSprite.getPosition(); // bullet origin for now?
+	}
+
+	//rework
+	void UpdateBullet(float delta)
+	{
+		
+		//recBullet.setOrigin(sprLoc);
+		//velocity = dir * speed;
+		currPos += velocity * delta;
+		currPos = bullPos;
+	//	bullPos += velocity * delta;
+		if(bullPos.x > 0.0f || velocity.x > 0.0f) //right
+		{
+			bullet.Update(delta);
+			velocity.x = bullPos.x * bulletSpeed;
+			bullPos += velocity * delta;
+			recBullet.setPosition( bullPos );
+			sprBul = recBullet.getPosition();
+		}
+		if(bullPos.x < 0.0f || velocity.x < 0.0f) //right
+		{
+			velocity.x = bullPos.x * bulletSpeed;
+			bullPos += velocity * delta;
+			recBullet.setPosition( bullPos );
+			sprBul = recBullet.getPosition();
+		}
+		if(bullPos.y > 0.0f || velocity.y > 0.0f) //right
+		{
+			velocity.y = bullPos.y * bulletSpeed;
+			bullPos += velocity * delta;
+			recBullet.setPosition( bullPos );
+			sprBul = recBullet.getPosition();
+		}
+		if(bullPos.y < 0.0f || velocity.y < 0.0f) //right
+		{
+			velocity.y = bullPos.y * bulletSpeed;
+			bullPos += velocity * delta;
+			recBullet.setPosition( bullPos );
+			sprBul = recBullet.getPosition();
+		}
+
 	}
 	
 	
@@ -960,6 +1004,7 @@ private:
 	
 
 	sf::Vector2f currPos;
+	sf::Vector2f bullPos;
 	sf::Vector2f velocity = {0.0f,0.0f};
 	sf::Sprite sprite;
 	sf::Sprite gunSprite;
@@ -967,11 +1012,12 @@ private:
 	View views[int( RenderIdx::Count )];
 	View gunViews[int( RenderWeaponIdx::Count )]; // within Char
 	View kitViews[int( RenderKitsIdx::Count )];
+	View bullet;//
 	RenderIdx currView = RenderIdx::IdleRight;
 	RenderWeaponIdx currWepView = RenderWeaponIdx::PistolRight;
 };
 
-class Lead : Char{
+class Lead{
 	public:
 
 
@@ -1122,6 +1168,7 @@ int main()
 	
 
 	
+	
 	sf::RenderWindow window( sf::VideoMode( 800,600 ),"SFML window" );
 
 	{
@@ -1129,16 +1176,14 @@ int main()
 		Char soldierCorpse( { 100.0f,200.0f } );
 		Char weapon ({20.0f,20.0f});
 		Char weaponEmpty ({20.0f,40.0f});
-
-		
 	}
 	
 
 	Tex::clearPtr();
 	PlayerTracker status;
 
-	Char soldier( { 100.0f,100.0f } );
-	Char weapon ( { 10.0f, 100.0f } );
+	Char soldier( { 400.0f,300.0f } );
+	Char weapon ( { 440.0f, 300.0f } );
 
 	//weapon.bullet;
 	sf::RectangleShape bulletStream;
@@ -1167,16 +1212,13 @@ int main()
 
 		// get delta
 		float delta;
-		float deltaLong;
-		auto dlong= std::chrono::milliseconds(900);
+		//float deltaLong;
+		//auto dlong= std::chrono::milliseconds(900);
 		//float dlong = 4000;
 		{
 			const auto new_tp = std::chrono::steady_clock::now();
 			delta = std::chrono::duration<float>( new_tp - tp ).count();
 			tp = new_tp;
-
-			
-
 		}
 
 		// make into switch cases?
@@ -1201,8 +1243,11 @@ int main()
 			
 			status.TrackAmmo(gun);
 			//std::cout << status.ammo; total quantity 
-			weapon.CountLead(status.ammo, bulletStream); //only collecting total and passing
-			weapon.LeadPos(bulletStream);
+	//still good?
+			//weapon.CountLead(status.ammo, bulletStream); //only collecting total and passing
+			//weapon.LeadPos(bulletStream);
+	//		
+			weapon.UpdateBullet(delta, dir, bulletStream);
 			//for(weapon.b = weapon.bullets.begin(); weapon.b != weapon.bullets.end(); ++weapon.b){
 			//(*weapon.b);
 				//get info and pass to Draw()
@@ -1303,11 +1348,11 @@ int main()
 		
 		soldier.SetDirection( dir );
 		weapon.SetDirection( dir );
-		weapon.DirShare(dir);
 		// update 
 		soldier.Update( delta );
 		weapon.UpdateGun( delta );
 		
+
 		// clear 
 		window.clear();
 		// draw
