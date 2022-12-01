@@ -1010,6 +1010,7 @@ class Lead{
 		bulletPos += vel * delta;
 
 		bullet.setPosition(bulletPos);
+		Update(delta);
 	}
 
 	void Update( float delta )  //4
@@ -1018,7 +1019,7 @@ class Lead{
 		while( time >= .2)
 		{
 			time -= .2;
-			bullet.move(bulletPos);
+			bulletPos.x +=1;
 		}
 	}
 
