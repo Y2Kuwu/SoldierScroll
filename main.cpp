@@ -330,7 +330,7 @@ public:
     float speed = 115.0f;
 	sf::Vector2f bullPos = currPos;
 	sf::Vector2f sprLoc; //= gunSprite.getPosition(); //get pos for weapon bullet origin
-	
+	std::string direction;
 
 	
 
@@ -519,7 +519,7 @@ public:
 
 
 		velocity = dir * speed;
-		std::string direction;
+		//std::string direction;
 		std::string isFiring;
 		std::string isCrouching;
 		std::string weaponType;
@@ -543,7 +543,7 @@ public:
 		}
 		else if(headingLeft && firing == false && crouch == false)
 		{
-			direction = "Right"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			direction = "Left"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
 			match = weaponType + direction;
 			//gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
 		}
@@ -566,7 +566,7 @@ public:
 		}
 		else if(idlLeft && firing == false && crouch == true)
 		{
-			direction = "Right"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			direction = "Left"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
 			match = weaponType + direction;
 			//gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
 		}
@@ -590,7 +590,7 @@ public:
 		}
 		else if(headingLeft && crouch == true && firing == false)
 		{
-			direction = "Right"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			direction = "Left"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
 			isCrouching = "Crouch";
 			match = weaponType + isCrouching + direction;
 			//gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
@@ -617,7 +617,7 @@ public:
 		}
 		else if(idlLeft && crouch == true && firing == false)
 		{
-			direction = "Right"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			direction = "Left"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
 			isCrouching = "Crouch";
 			match = weaponType + isCrouching + direction;
 			//gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
@@ -645,7 +645,7 @@ public:
 		}
 		else if(idlLeft && crouch == true && firing == true)
 		{
-			direction = "Right"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			direction = "Left"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
 			isCrouching = "Crouch";
 			isFiring = "Fire";
 			match = weaponType + isCrouching + direction;
@@ -677,7 +677,7 @@ public:
 		}
 		else if(headingLeft && crouch == true && firing == true)
 		{
-			direction = "Right"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			direction = "Left"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
 			isCrouching = "Crouch";
 			isFiring = "Fire";
 			match = weaponType + isCrouching + direction;
@@ -707,7 +707,7 @@ public:
 		}
 		else if(headingLeft && crouch == false && firing == true)
 		{
-			direction = "Right"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			direction = "Left"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
 			isFiring = "Fire";
 			match = weaponType + isFiring + direction;
 			//gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
@@ -766,6 +766,7 @@ public:
 	}
 
         //check toggle for auto fire
+		//remove or adjust
     void CheckIfAuto(int clicked)
     {
         for(int clicked = 0; clicked < 2; clicked++){
@@ -774,6 +775,7 @@ public:
             }
         }
     }
+	//remove
 		void LeadPos(sf::RectangleShape lead)
 		{
 			//lead.setPosition(50, 50);
@@ -821,26 +823,12 @@ public:
 			currView = RenderIdx::GoDown;
 		}
 		//weapon movement animation
-		else {
-		if( dir.x > 0.0f ) 
-		{
-			
+		
+		
 			//currView = RenderIdx:: 
 			//RenderIdx currView = (RenderIdx)System.Enum.Parse(typeof(RenderIdx), dirSet);
 			//std::map<std::string,std::string> fstring;
-		}
-		else if( dir.x < 0.0f )
-		{
-			currView = RenderIdx::GoLeft;
-		}
-		else if( dir.y < 0.0f )
-		{
-			currView = RenderIdx::GoUp;
-		}
-		else if( dir.y > 0.0f )
-		{
-			currView = RenderIdx::GoDown;
-		}
+		
 		//
 
 		//crouching animations
@@ -905,7 +893,8 @@ public:
 		}
 		}
 		}
-		}
+		
+	
 		velocity = dir * speed;
 	}
     
@@ -970,12 +959,12 @@ class Lead{
 	public:
 	sf::Vector2f vel;
 	sf::Vector2f bulletPos;
-	
-	sf::Vector2f traj; //get .x .y and check > or < 0
+	std::string trajectory;
+	sf::Vector2f traject; //get .x .y and check > or < 0
 	//std::vector<sf::RectangleShape> bullets;
 	//std::vector<sf::RectangleShape>::iterator b;
 	sf::RectangleShape bullet;
-	float bulletSpeed;
+	float bulletSpeed = 140.0f;
 	float time = 0.0f;
 
 	Lead(float rad = 400)
@@ -988,16 +977,18 @@ class Lead{
 		}
 	sf::Vector2f bullPos = bullet.getPosition(); //= recBull.getPosition();  will need to be changed
 	//sf::Vector2f bullStart = bullet.setPosition();
-	void SetBullet(sf::Vector2f pos){
+	void SetBullet(sf::Vector2f pos, std::string traj){
 		 //bullet.setPosition(pos);
 		 bulletPos = pos;
 		 //bullet.setOrigin(bulletPos);			//1
-		 std::cout<< pos.x; //correct
-		 std::cout << pos.y;
+		 //std::cout<< pos.x; //correct
+		 //std::cout << pos.y;
+		 trajectory = traj;
 	}
 
 	void SetTraj (sf::Vector2f& dir) {
 		vel = dir * bulletSpeed;  		//2
+		traject = dir;
 		
 	}
 	void Fire(sf::RenderTarget& rt) const	//3
@@ -1016,10 +1007,27 @@ class Lead{
 	void Update( float delta )  //4
 	{
 		time += delta;
-		while( time >= .2)
+		while( time >= .1)
 		{
-			time -= .2;
-			bulletPos.x +=1;
+			
+			vel = traject * bulletSpeed;
+			time -= .1;
+			if(trajectory == "Up")
+			{
+				traject.y -= 1;
+			}
+			if(trajectory == "Down")
+			{
+				traject.y += 1;
+			}
+			if(trajectory == "Right")
+			{
+				traject.x += 1;
+			}
+			if(trajectory == "Left")
+			{
+				traject.x -= 1;
+			}
 		}
 	}
 
@@ -1235,13 +1243,14 @@ int main()
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::Space) )
 		{
 			//std::cout << weapon.sprLoc.x;
+			//std::cout << soldier.direction;
 			soldier.firing = true;
 			soldier.CheckWeapon(dir);
 			//soldier.GunCheck(gun);
 			soldier.FireCheck(soldier.firing, dir);
 			//const auto new_dl = std::chrono::steady_clock::now();
 			status.TrackAmmo(gun);
-			lead.SetBullet(weapon.sprLoc);
+			lead.SetBullet(weapon.sprLoc, soldier.direction);
 			lead.SetTraj(dir);
 			
 			//std::cout << status.ammo; total quantity 
