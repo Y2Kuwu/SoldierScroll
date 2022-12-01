@@ -157,16 +157,7 @@ public:
 			RendNext();
 		}
 	}
-	void UpdateProj( float delta )
-	{
-		{
-		time += delta;
-		while( time >= wait )
-		{
-			time -= wait;
-		}
-	}
-	}
+	
 
 private:
 	void RendNext()
@@ -337,12 +328,9 @@ public:
 	bool firing = false;
 	int gunValue;
     float speed = 115.0f;
-	float bulletSpeed = 140.0f;
+	sf::Vector2f bullPos = currPos;
 	sf::Vector2f sprLoc; //= gunSprite.getPosition(); //get pos for weapon bullet origin
-	sf::Vector2f sprBul; //= recBull.getPosition();  will need to be changed
-	std::vector<sf::RectangleShape> bullets;
-	std::vector<sf::RectangleShape>::iterator b;
-	sf::RectangleShape bullet;
+	
 
 	
 
@@ -483,7 +471,6 @@ public:
 	{
 		rt.draw( sprite );
 		rt.draw( gunSprite );
-		rt.draw( bullet );
 	}
 
         //check which gun is called
@@ -750,7 +737,7 @@ public:
 	  	
 		for(gunn = gunner.begin(); gunn != gunner.end(); gunn++){
 		if(match == gunn->second){
-			std::cout << gunn->second; // grab second value
+			//use>>>>>>>>//std::cout << gunn->second; // grab second value
 			currWepView = gunn->first; // grab first value 
 		}
 		}
@@ -795,10 +782,10 @@ public:
 
 		void CountLead(int mag, sf::RectangleShape lead){//int magSize ){
 		
-		bullet = lead;
-		bullets.reserve(mag); 
-		//while(mag-= 1 && mag != 0){
-		bullets.push_back(lead);
+		// bullet = lead;
+		// bullets.reserve(mag); 
+		// //while(mag-= 1 && mag != 0){
+		// bullets.push_back(lead);
 		//for(b = bullets.begin(); b != bullets.end(); b++){
 		//for (auto b : bullets){
 			//b = bullet;
@@ -950,53 +937,10 @@ public:
 		sprLoc = gunSprite.getPosition(); // bullet origin for now?
 	}
 
-	//rework
-	void UpdateBullet(float delta)
-	{
-		
-		//recBullet.setOrigin(sprLoc);
-		//velocity = dir * speed;
-		currPos += velocity * delta;
-		currPos = bullPos;
-	//	bullPos += velocity * delta;
-		if(bullPos.x > 0.0f || velocity.x > 0.0f) //right
-		{
-			bullet.Update(delta);
-			velocity.x = bullPos.x * bulletSpeed;
-			bullPos += velocity * delta;
-			recBullet.setPosition( bullPos );
-			sprBul = recBullet.getPosition();
-		}
-		if(bullPos.x < 0.0f || velocity.x < 0.0f) //right
-		{
-			velocity.x = bullPos.x * bulletSpeed;
-			bullPos += velocity * delta;
-			recBullet.setPosition( bullPos );
-			sprBul = recBullet.getPosition();
-		}
-		if(bullPos.y > 0.0f || velocity.y > 0.0f) //right
-		{
-			velocity.y = bullPos.y * bulletSpeed;
-			bullPos += velocity * delta;
-			recBullet.setPosition( bullPos );
-			sprBul = recBullet.getPosition();
-		}
-		if(bullPos.y < 0.0f || velocity.y < 0.0f) //right
-		{
-			velocity.y = bullPos.y * bulletSpeed;
-			bullPos += velocity * delta;
-			recBullet.setPosition( bullPos );
-			sprBul = recBullet.getPosition();
-		}
 
-	}
-	
-	
-	
 
 private:
 	
-    // acting as bool // change animation cycles
    
     int proneValue;
     int autoValue;
@@ -1004,7 +948,7 @@ private:
 	
 
 	sf::Vector2f currPos;
-	sf::Vector2f bullPos;
+	
 	sf::Vector2f velocity = {0.0f,0.0f};
 	sf::Sprite sprite;
 	sf::Sprite gunSprite;
@@ -1017,11 +961,73 @@ private:
 	RenderWeaponIdx currWepView = RenderWeaponIdx::PistolRight;
 };
 
+
+
+
+
+
 class Lead{
 	public:
+	sf::Vector2f vel;
+	sf::Vector2f bulletPos;
+	
+	sf::Vector2f traj; //get .x .y and check > or < 0
+	//std::vector<sf::RectangleShape> bullets;
+	//std::vector<sf::RectangleShape>::iterator b;
+	sf::RectangleShape bullet;
+	float bulletSpeed;
+	float time = 0.0f;
 
+	Lead(float rad = 400)
+		:	vel(0.0f,0.0f), bulletSpeed(140.0f)
+		{
+			this->bullet.setSize(sf::Vector2f(20 , 10));
+			this->bullet.setFillColor(sf::Color::Red);
+			this->bullet.setOutlineColor(sf::Color::White);
+			this->bullet.setOutlineThickness(2);
+		}
+	sf::Vector2f bullPos = bullet.getPosition(); //= recBull.getPosition();  will need to be changed
+	//sf::Vector2f bullStart = bullet.setPosition();
+	void SetBullet(sf::Vector2f pos){
+		 //bullet.setPosition(pos);
+		 bulletPos = pos;
+		 //bullet.setOrigin(bulletPos);			//1
+		 std::cout<< pos.x; //correct
+		 std::cout << pos.y;
+	}
+
+	void SetTraj (sf::Vector2f& dir) {
+		vel = dir * bulletSpeed;  		//2
+		
+	}
+	void Fire(sf::RenderTarget& rt) const	//3
+	{
+		rt.draw(bullet);
+	}
+
+	void UpdateShot (float delta)  //5
+	{
+		bulletPos += vel * delta;
+
+		bullet.setPosition(bulletPos);
+	}
+
+	void Update( float delta )  //4
+	{
+		time += delta;
+		while( time >= .2)
+		{
+			time -= .2;
+			bullet.move(bulletPos);
+		}
+	}
+
+	
 
 };
+
+
+
 
 
 class PlayerTracker{
@@ -1030,7 +1036,7 @@ public:
 	int y;
 	
 
-	int ammo; // array or vector?
+	int ammo; 
 	int ammoPIS = 25;
 	int ammoSG = 5;
 	int ammoRIF = 50;
@@ -1184,19 +1190,15 @@ int main()
 
 	Char soldier( { 400.0f,300.0f } );
 	Char weapon ( { 440.0f, 300.0f } );
-
+	
 	//weapon.bullet;
-	sf::RectangleShape bulletStream;
 	//weapon.bullet = bulletStream;
 		// assign position
-	bulletStream.setSize(sf::Vector2f(20 , 10));
-	bulletStream.setFillColor(sf::Color::Red);
-	bulletStream.setOutlineColor(sf::Color::White);
-	bulletStream.setOutlineThickness(2);
-
+	bool fire = false;
+	Lead lead;
+	//lead.SetBullet(weapon.bullPos);
 	// timepoint for delta time measurement
 	auto tp = std::chrono::steady_clock::now();
-	auto dl = std::chrono::steady_clock::now();
 
 	// Start the game loop
 	while( window.isOpen() )
@@ -1212,9 +1214,6 @@ int main()
 
 		// get delta
 		float delta;
-		//float deltaLong;
-		//auto dlong= std::chrono::milliseconds(900);
-		//float dlong = 4000;
 		{
 			const auto new_tp = std::chrono::steady_clock::now();
 			delta = std::chrono::duration<float>( new_tp - tp ).count();
@@ -1234,23 +1233,28 @@ int main()
         }
         if( sf::Keyboard::isKeyPressed( sf::Keyboard::Space) )
 		{
+			//std::cout << weapon.sprLoc.x;
 			soldier.firing = true;
-			//soldier.CheckWeapon(dir);
+			soldier.CheckWeapon(dir);
 			//soldier.GunCheck(gun);
 			soldier.FireCheck(soldier.firing, dir);
 			//const auto new_dl = std::chrono::steady_clock::now();
-			
-			
 			status.TrackAmmo(gun);
+			lead.SetBullet(weapon.sprLoc);
+			lead.SetTraj(dir);
+			
 			//std::cout << status.ammo; total quantity 
 	//still good?
 			//weapon.CountLead(status.ammo, bulletStream); //only collecting total and passing
 			//weapon.LeadPos(bulletStream);
 	//		
-			weapon.UpdateBullet(delta, dir, bulletStream);
+			//weapon.UpdateBullet(delta, dir, bulletStream);
 			//for(weapon.b = weapon.bullets.begin(); weapon.b != weapon.bullets.end(); ++weapon.b){
 			//(*weapon.b);
 				//get info and pass to Draw()
+			
+			//lead.Fire(window);
+			//lead.Fire( window );
 			
 			//
 			status.setTracker();
@@ -1348,21 +1352,27 @@ int main()
 		
 		soldier.SetDirection( dir );
 		weapon.SetDirection( dir );
+		
 		// update 
 		soldier.Update( delta );
 		weapon.UpdateGun( delta );
-		
+		lead.UpdateShot(delta);
 
 		// clear 
 		window.clear();
 		// draw
-		status.DrawTracker( window );
 		soldier.Draw( window );
-		weapon.Draw( window );
+		//weapon.Draw( window );
+		lead.Fire(window);
+			
+		
+			
+		
 		status.setTracker(); // track status of player
 		status.DrawTracker( window );
 		// update window
 		window.display();
+		
 	}
 	return EXIT_SUCCESS;
 }
