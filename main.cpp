@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <chrono>
 #include <vector>
+#include <iterator>
 #include <memory>
 #include <unordered_map>
 #include <string>
@@ -776,11 +777,11 @@ public:
         }
     }
 	//remove
-		void LeadPos(sf::RectangleShape lead)
-		{
-			//lead.setPosition(50, 50);
-			lead.setPosition(sprLoc.x, sprLoc.y);
-		}
+		// void LeadPos(sf::RectangleShape lead)
+		// {
+		// 	//lead.setPosition(50, 50);
+		// 	lead.setPosition(sprLoc.x, sprLoc.y);
+		// }
 
 		void CountLead(int mag, sf::RectangleShape lead){//int magSize ){
 		
@@ -935,7 +936,7 @@ private:
     int autoValue;
     //
 	
-
+	
 	sf::Vector2f currPos;
 	
 	sf::Vector2f velocity = {0.0f,0.0f};
@@ -964,17 +965,29 @@ class Lead{
 	//std::vector<sf::RectangleShape> bullets;
 	//std::vector<sf::RectangleShape>::iterator b;
 	sf::RectangleShape bullet;
+	
+	std::vector<sf::RectangleShape>bullets;
+	std::vector<sf::RectangleShape>::iterator bul;
+	//std::vector<sf::RectangleShape>::iterator r;
 	float bulletSpeed = 140.0f;
 	float time = 0.0f;
+
+	int fullMag;
+	int fullMagazine;
+
+	int pistolMag;
+	int rifleMag;
+	int shotSlug;
 
 	Lead(float rad = 400)
 		:	vel(0.0f,0.0f), bulletSpeed(140.0f)
 		{
-			this->bullet.setSize(sf::Vector2f(20 , 10));
-			this->bullet.setFillColor(sf::Color::Red);
+			this->bullet.setSize(sf::Vector2f(10 , 5));
+			this->bullet.setFillColor(sf::Color::Black);
 			this->bullet.setOutlineColor(sf::Color::White);
 			this->bullet.setOutlineThickness(2);
 		}
+		
 	sf::Vector2f bullPos = bullet.getPosition(); //= recBull.getPosition();  will need to be changed
 	//sf::Vector2f bullStart = bullet.setPosition();
 	void SetBullet(sf::Vector2f pos, std::string traj){
@@ -991,10 +1004,7 @@ class Lead{
 		traject = dir;
 		
 	}
-	void Fire(sf::RenderTarget& rt) const	//3
-	{
-		rt.draw(bullet);
-	}
+	
 
 	void UpdateShot (float delta)  //5
 	{
@@ -1030,7 +1040,52 @@ class Lead{
 			}
 		}
 	}
+	void CountLead(int magazine) //return if 0 , starting size or ++
+	{
+		//std::cout << magazine;
+		fullMag = magazine;
+		fullMagazine = magazine-1;
+		//bullets.reserve(fullMag);
+		//bullets.insert(bullets.end(), fullMag, bullet);
+	}
 
+	void DeployLead()
+	{
+		//bullets.reserve(fullMag);
+		
+		//bullets.push_back(bullet);
+		
+		//bullets.insert(bullets.end(), fullMag, bullet);
+		//bullets.push_back(bullet);
+		std::cout << bullets.size();
+		// for(bul = bullets.begin(); bul != bullets.end()-1; ++bul)
+		// {
+		// 	if (bullets[bul] = bullets[bul]+1)
+		// 	{
+
+		// 	}
+		//auto start = bullets.begin();
+		//auto next = std::next(start, fullMag-1);
+		this->bullets.push_back(bullet);
+		//*next;
+
+		// while(mag > 0)
+		// {
+		// 	b != bullets.end();
+
+		// }
+		
+	}
+ void Fire(sf::RenderTarget&rt) const	//3
+	{
+		for(auto b : bullets){
+		if(fullMag!=fullMagazine){
+		
+		//rt.draw(Lead::bullet * b = new Lead::bullet);
+		rt.draw(b);
+		}
+		}
+	}
 	
 
 };
@@ -1041,13 +1096,9 @@ class Lead{
 
 class PlayerTracker{
 public:
-	int x;
-	int y;
-	
-
 	int ammo; 
 	int ammoPIS = 25;
-	int ammoSG = 5;
+	int ammoSG = 10;
 	int ammoRIF = 50;
 	int health = 100;
 	int armor = 0;
@@ -1129,8 +1180,8 @@ public:
 		totHealth.setString("Health: " + std::to_string(health));
 	}
 	
-	void TrackAllAmmo(int ps , int rf, int sg){
-		ammo = ps + rf + sg;
+	void TrackAllAmmo(){
+		ammo = ammoPIS + ammoRIF + ammoSG;
 	}
 
 	void TrackAmmo(int g){
@@ -1160,7 +1211,7 @@ public:
 			timeCount++;
 			ammoSG -= 1; // ammo type 1 , 2 , 3
 		}
-		TrackAllAmmo(ammoPIS , ammoRIF, ammoSG);
+		//TrackAllAmmo(ammoPIS , ammoRIF, ammoSG);
 		//std::cout << ammo;
 	}
 
@@ -1181,7 +1232,7 @@ public:
 int main()
 {
 	
-
+	std::vector<sf::RectangleShape>::iterator r;
 	
 	
 	sf::RenderWindow window( sf::VideoMode( 800,600 ),"SFML window" );
@@ -1250,9 +1301,14 @@ int main()
 			soldier.FireCheck(soldier.firing, dir);
 			//const auto new_dl = std::chrono::steady_clock::now();
 			status.TrackAmmo(gun);
+			status.TrackAllAmmo();
 			lead.SetBullet(weapon.sprLoc, soldier.direction);
 			lead.SetTraj(dir);
-			
+			if(status.ammo == 0 || status.ammo == status.ammo + 50 || status.ammo == 84) // checks if zero or picks up ammo
+			{	//reserve space once
+			lead.CountLead(status.ammo);
+			}
+			lead.DeployLead();
 			//std::cout << status.ammo; total quantity 
 	//still good?
 			//weapon.CountLead(status.ammo, bulletStream); //only collecting total and passing
@@ -1374,7 +1430,7 @@ int main()
 		soldier.Draw( window );
 		//weapon.Draw( window );
 		lead.Fire(window);
-			
+		
 		
 			
 		
