@@ -7,7 +7,7 @@
 class Slug
 {
     private:
-    std::map<std::string, sf::RectangleShape*> b;
+    std::map<std::string, sf::Texture*> b;
 	std::vector<Lead*> bullets;
     //sf::RenderWindow* win;
     

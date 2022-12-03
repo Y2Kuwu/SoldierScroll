@@ -1,7 +1,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 // #include "lead.h"
-// #include "slug.h"
+//#include "slug.h"
 #include <chrono>
 #include <vector>
 #include <iterator>
@@ -334,8 +334,9 @@ public:
 	sf::Vector2f bullPos = currPos;
 	sf::Vector2f sprLoc; //= gunSprite.getPosition(); //get pos for weapon bullet origin
 	std::string direction;
-
-	
+	sf::RectangleShape bullet;
+	//sf::Vector2f win;
+	sf::Vector2f winSz;
 
 	sf::FloatRect playerBounds = sprite.getGlobalBounds();
 	//sf::FloatRect healthKit = health.getGlobalBounds();
@@ -474,7 +475,29 @@ public:
 	{
 		rt.draw( sprite );
 		rt.draw( gunSprite );
+		rt.draw( bullet );
 	}
+
+	void Border(float totWid , float totHeight)
+	{
+		winSz.x = totWid;
+		winSz.y = totHeight;
+	}
+	
+																	//change speed by weapon
+	void Bullet(float velX, float velY, float dirX, float dirY, float speed)
+		{
+			sf::Vector2f bulletDirection(dirX,dirY);
+			velocity = bulletDirection * speed; 
+			bullet.setPosition(sprLoc);
+			bullet.setSize(sf::Vector2f(10,5));
+			bullet.setFillColor(sf::Color::Black);
+			bullet.setOutlineColor(sf::Color::White);
+			//while(bullet.getPosition().x < winSz.x && bullet.getPosition().y < winSz.y)
+			//{
+			bullet.setPosition(bulletDirection);
+			//}
+		}
 
         //check which gun is called
     void CheckWeapon(const sf::Vector2f& dir)
@@ -645,6 +668,7 @@ public:
 			isCrouching = "Crouch";
 			isFiring = "Fire";
 			match = weaponType + isCrouching + direction;
+			
 		}
 		else if(idlLeft && crouch == true && firing == true)
 		{
@@ -707,6 +731,8 @@ public:
 			direction = "Right";
 			isFiring = "Fire";
 			match = weaponType + isFiring + direction;
+			
+			
 		}
 		else if(headingLeft && crouch == false && firing == true)
 		{
@@ -929,6 +955,8 @@ public:
 		sprLoc = gunSprite.getPosition(); // bullet origin for now?
 	}
 
+	
+
 
 
 private:
@@ -942,6 +970,7 @@ private:
 	sf::Vector2f currPos;
 	
 	sf::Vector2f velocity = {0.0f,0.0f};
+	
 	sf::Sprite sprite;
 	sf::Sprite gunSprite;
 	sf::Sprite kit;
@@ -1122,10 +1151,9 @@ public:
 	int ammoRIF = 50;
 	int health = 100;
 	int armor = 0;
-
 	int timeCount = 1;
 	double timer = 0;
-
+	
 	//1 2 3
 	double threeQuarter; //= .75; // adjust this for increments or add var below and divide by PER_SECS var
 	
@@ -1200,15 +1228,21 @@ public:
 		totHealth.setString("Health: " + std::to_string(health));
 	}
 	
-	void TrackAllAmmo(){
+	void TrackAllAmmo()
+	{
 		ammo = ammoPIS + ammoRIF + ammoSG;
 	}
 
+	
+	
+
 	void TrackAmmo(int g){
 		
+		float speed = 140.0f;
 		time1 = clock(); 
 		timer += (double)(time1 - time2);
 		time2 = time1;
+		
 
 		if(timer > (double)(threeQuarter * CLOCKS_PER_SEC) && g == 1)
 		{
@@ -1251,6 +1285,8 @@ public:
 
 int main()
 {
+	
+
 	std::string bulletFile = "bullet.png";
 	std::vector<sf::RectangleShape>::iterator r;
 	float bullet_s = 140.0f;
@@ -1259,10 +1295,10 @@ int main()
 	
 
 	sf::RenderWindow window( sf::VideoMode( 800,600 ),"SFML window" );
-	sf::FloatRect winSz(sf::Vector2f(0.f,0.f), window.getDefaultView().getSize()); //bounds 
-	sf::RectangleShape winBox({800.f,600.f});
-	winBox.setPosition((window.getView().getSize() - winBox.getSize())/2.f);
-	winBox.setFillColor(sf::Color::Red);
+	window.setKeyRepeatEnabled(false);
+	
+	
+	
 	
 	{
 		Char soldier( { 100.0f,100.0f } );
@@ -1274,9 +1310,11 @@ int main()
 	Tex::clearPtr();
 	PlayerTracker status;
 
+
 	Char soldier( { 400.0f,300.0f } );
 	Char weapon ( { 440.0f, 300.0f } );
-	
+
+	soldier.Border(window.getSize().x, window.getSize().y); //border collision
 	//weapon.bullet;
 	//weapon.bullet = bulletStream;
 		// assign position
@@ -1311,6 +1349,8 @@ int main()
 		sf::Vector2f dir = { 0.0f,0.0f };
         int autoCheck = 0;
 		int gun;
+		sf::Vector2f vel(2,0);
+		float spd;
 		//int crouching = 1;
         if (sf::Keyboard::isKeyPressed( sf::Keyboard::LControl) ){
             soldier.speed = 0.0f;
@@ -1323,15 +1363,17 @@ int main()
 			soldier.firing = true;
 			soldier.CheckWeapon(dir);
 			soldier.FireCheck(soldier.firing, dir);
+			
 			status.TrackAmmo(gun);
 			status.TrackAllAmmo();
+			//status.CreateBullet(soldier.direction, weapon.sprLoc);
 				
-				lead.CountLead(status.ammo);
-				lead.SetBullet(weapon.sprLoc, soldier.direction);
+			//	lead.CountLead(status.ammo);
+			//	lead.SetBullet(weapon.sprLoc, soldier.direction);
 				
-				lead.SetTraj(dir);
+			//	lead.SetTraj(dir);
 				
-				lead.DeployLead();
+			//	lead.DeployLead();
 		
 		//	if(status.ammo == 0 || status.ammo == status.ammo + 50 || status.ammo == 84) // checks if zero or picks up ammo
 		//	{	//reserve space once
@@ -1450,20 +1492,20 @@ int main()
 		
 		soldier.SetDirection( dir );
 		weapon.SetDirection( dir );
-		lead.SetTraj( dir );
+		//lead.SetTraj( dir );
 		// update 
 		
 		soldier.Update( delta );
 		weapon.UpdateGun( delta );
 		//lead.UpdateShot(delta);
-		lead.Update();
+		//lead.Update();
 		
 		
 		// clear 
 		window.clear();
 		// draw
 		soldier.Draw( window );
-		lead.Fire(window);
+		//lead.Fire(window);
 		
 		//weapon.Draw( window );
 			//lead.Fire(window);
@@ -1473,6 +1515,7 @@ int main()
 
 		status.setTracker(); // track status of player
 		status.DrawTracker( window );
+		
 		// update window
 		window.display();
 		

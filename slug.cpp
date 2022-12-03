@@ -23,7 +23,7 @@
 	void Slug::SlugFactory()
 	{
 		this->b["LEAD"] = new sf::Texture();
-		this->b["LEAD"]->loadFromFile("slug.png");
+		this->b["LEAD"]->loadFromFile("bullet.png");
 	}
 	void Slug::Fire()
 	{
@@ -67,7 +67,7 @@
 	{
 		for(auto *bb : this->bullets)
 		{
-			bb->Rend(win);
+			bb->Render(win);
 		}
 	}
     
@@ -75,4 +75,10 @@
     {
         this->SlugFactory();
     }
-	
+	Slug::~Slug()
+	{
+		for (auto *i : this->bullets)
+		{
+			delete i;
+		}
+	}

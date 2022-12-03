@@ -4,9 +4,9 @@ Lead::Lead(){}
 
 float bulletSpeed;
 
-    Lead::Lead(sf::RectangleShape* bull, float bullet_speed, float dirX, float dirY, float posX, float posY)
+    Lead::Lead(sf::Texture* bull, float bullet_speed, float dirX, float dirY, float posX, float posY)
     {
-        //this->bullet.setTexture(*bull);
+        this->bullet.setTexture(*bull);
         this->bullet.setPosition(posX,posY);
         this->direction.x = posX;
         this->direction.y = posY;

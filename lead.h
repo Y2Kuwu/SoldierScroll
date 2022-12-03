@@ -5,13 +5,13 @@
 class Lead
 {
 private:
-sf::RectangleShape bullet;
+sf::Sprite bullet;
 sf::Vector2f direction;
 float bulletSpeed;
 
 public:
     Lead();
-    Lead(sf::RectangleShape* bull, float bullet_speed, float dirX, float dirY, float posX, float posY);
+    Lead(sf::Texture* bull, float bullet_speed, float dirX, float dirY, float posX, float posY);
     virtual ~Lead();
 
     const sf::FloatRect impact() const;
