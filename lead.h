@@ -22,14 +22,15 @@ class Lead
     
     float posX;
     float posY;
-    
+    sf::Vector2f bulletPostion; //= lead.getPosition();
+    //posX = lead.getPosition().x;
    // Lead::Lead(){}
-
+    Lead() = default;
     Lead(sf::Vector2f sz)
     {
         lead.setSize(sz);
     }
-
+   
     // float IntPos(float wepX , float wepY)
     // {
     //     wepX = posX;
@@ -37,26 +38,11 @@ class Lead
     //     return wepX , wepY;
     // }
 
+   
     void Traj(float speedX , float speedY)
     {
         lead.move(speedX , speedY);
-    }
-
-    float PosRight()
-    {
-        return lead.getPosition().x + lead.getSize().x;
-    }
-     float PosLeft()
-    {
-        return lead.getPosition().x;
-    }
-     float PosUp()
-    {
-        return lead.getPosition().y;
-    }
-     float PosDown()
-    {
-        return lead.getPosition().y + lead.getSize().y;
+        bulletPostion = lead.getPosition();
     }
 
     void PosFire(sf::RenderWindow &window)
@@ -72,6 +58,21 @@ class Lead
         // newPos.x = posX;
         // newPos.y = posY;
         lead.setPosition(newPos);
+    }
+    // void Location(float maxX, float maxY, std::vector<Lead>l)
+    // {
+    //     if(lead.getPosition().x >= maxX || lead.getPosition().x <= -maxX)
+    //     {
+    //         l.erase(l.begin());
+    //     }
+    //     if(lead.getPosition().y >= maxY || lead.getPosition().y <= -maxY)
+    //     {
+    //         l.erase(l.begin());
+    //     }
+    // }
+    void GetPos(float x, float y)
+    {
+
     }
 
     private: 

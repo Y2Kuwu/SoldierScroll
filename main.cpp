@@ -336,9 +336,9 @@ public:
 	sf::Vector2f sprLoc; //= gunSprite.getPosition(); //get pos for weapon bullet origin
 	std::string direction;
 	sf::RectangleShape bullet;
-	//sf::Vector2f win;
+	
 	sf::Vector2f winSz;
-	//sf::Vector2f sprLoc = gunSprite.getPosition(); // bullet origin for now?
+	sf::Vector2f wepPosition = gunSprite.getPosition();
 
 
 	sf::FloatRect playerBounds = sprite.getGlobalBounds();
@@ -485,6 +485,7 @@ public:
 	{
 		winSz.x = totWid;
 		winSz.y = totHeight;
+		
 	}
 	
 	// void Bullet()
@@ -1470,15 +1471,13 @@ int main()
 {
 	
 
-	std::vector<sf::RectangleShape>::iterator r;
-	sf::RectangleShape bull_r;
-	//Lead lead;
-	float bulletSpeed = 20.0f;
-	//Lead lead;
+	float bulletSpeed = 2.0f;
+	Lead led;
 	sf::RenderWindow window( sf::VideoMode( 800,600 ),"SFML window" );
-	//window.setKeyRepeatEnabled(false);
-	
-	
+	window.setKeyRepeatEnabled(false);
+	float winX = window.getSize().x;
+	float winY = window.getSize().y;
+		
 	
 	
 	{
@@ -1496,7 +1495,7 @@ int main()
 	Char soldier( { 400.0f,300.0f } );
 	Char weapon ( { 440.0f, 300.0f } );
 
-	soldier.Border(window.getSize().x, window.getSize().y); //border collision
+	 //border collision
 	//weapon.bullet;
 	//weapon.bullet = bulletStream;
 		// assign position
@@ -1679,7 +1678,6 @@ int main()
 		//weapon.BulletUpdate(dir);
 		//lead.SetTraj( dir );
 		// update 
-		
 		soldier.Update( delta );
 		weapon.UpdateGun( delta );
 		//lead.UpdateShot(delta);
@@ -1693,20 +1691,64 @@ int main()
 		soldier.Draw( window );
 		weapon.Draw( window );
 		
-
+		sf::Vector2f newBulletLocation;
 		status.setTracker(); // track status of player
 		status.DrawTracker( window );
 		if(fire == true)
 		{
-			std::cout << weapon.sprLoc.x;
+			
+			//std::cout << weapon.direction;
 			Lead hotLead(sf::Vector2f(10,5));
-			hotLead.SetPos(soldier.sprLoc);
+			
+			sf::Vector2f l(weapon.sprLoc.x , weapon.sprLoc.y);
+			hotLead.SetPos(l);
+			
 			leadMag.push_back(hotLead);
 		}
         for (int bang = 0; bang < leadMag.size(); ++bang)
 		{
 			leadMag[bang].PosFire(window);
-			leadMag[bang].Traj(bulletSpeed , 0);
+			if(weapon.direction == "Up")
+			{
+				leadMag[bang].Traj(0 , -bulletSpeed);
+			}
+			if(weapon.direction == "Down")
+			{
+				leadMag[bang].Traj(0 , bulletSpeed);
+			}
+			if(weapon.direction == "Left")
+			{
+				leadMag[bang].Traj(-bulletSpeed , 0);
+			}
+			if(weapon.direction == "Right")
+			{
+				leadMag[bang].Traj(bulletSpeed , 0);
+				
+			}
+			//weapon.Border(window.getSize().x, window.getSize().y);
+			newBulletLocation = leadMag[bang].bulletPostion;
+			//std::cout << newBulletLocation.x;
+			if(newBulletLocation.x >= winX)
+			{
+				leadMag.erase(leadMag.begin());
+				//std::cout << leadMag.size();
+			}
+			if(newBulletLocation.x <= -winX)
+			{
+				leadMag.erase(leadMag.begin());
+				//std::cout <<leadMag.size();
+			}
+			if(newBulletLocation.y >= winY)
+			{
+				leadMag.erase(leadMag.begin());
+				//std::cout <<leadMag.size();
+			}
+			if(newBulletLocation.x <= -winY)
+			{
+				leadMag.erase(leadMag.begin());
+				//std::cout <<leadMag.size();
+			}
+
 			fire = false;
 		}
 		// update window
