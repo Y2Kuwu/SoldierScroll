@@ -1471,13 +1471,14 @@ int main()
 {
 	
 
-	float bulletSpeed = 2.0f;
+	float bulletSpeed = 4.0f;
 	Lead led;
 	sf::RenderWindow window( sf::VideoMode( 800,600 ),"SFML window" );
-	window.setKeyRepeatEnabled(false);
+	window.setKeyRepeatEnabled(true);
 	float winX = window.getSize().x;
 	float winY = window.getSize().y;
-		
+	sf::Vector2f bulletWH;
+	sf::Vector2f trailWH;
 	
 	
 	{
@@ -1692,16 +1693,53 @@ int main()
 		weapon.Draw( window );
 		
 		sf::Vector2f newBulletLocation;
+		sf::Vector2f newTrailLocation;
+		sf::Vector2f offset;
 		status.setTracker(); // track status of player
 		status.DrawTracker( window );
 		if(fire == true)
 		{
-			
+			if(weapon.direction == "Up" || "Down")
+			{
+				bulletWH.x = 5;
+				bulletWH.y = 10;
+				trailWH.x = 5;
+				trailWH.y = 2;
+				
+			}
+			if(weapon.direction == "left" || "Right")
+			{
+				bulletWH.x = 10;
+				bulletWH.y = 5;
+				trailWH.x = 2;
+				trailWH.y = 5;
+				
+			}
+			if(weapon.direction == "Up")
+			{
+				offset.y = weapon.sprLoc.y-1;
+				offset.x = weapon.sprLoc.x;
+			}
+			if(weapon.direction == "Down")
+			{
+				offset.y = weapon.sprLoc.y+1;
+				offset.x = weapon.sprLoc.x;
+			}
+			if(weapon.direction == "Left")
+			{
+				offset.x = weapon.sprLoc.x-1;
+				offset.y = weapon.sprLoc.y;
+			}
+			if(weapon.direction == "Right")
+			{
+				offset.x = weapon.sprLoc.x+1;
+				offset.y = weapon.sprLoc.y;
+			}
 			//std::cout << weapon.direction;
-			Lead hotLead(sf::Vector2f(10,5));
+			Lead hotLead(sf::Vector2f(10,5), sf::Vector2f(2,5));
 			
 			sf::Vector2f l(weapon.sprLoc.x , weapon.sprLoc.y);
-			hotLead.SetPos(l);
+			hotLead.SetPos(l, offset);
 			
 			leadMag.push_back(hotLead);
 		}
@@ -1727,23 +1765,24 @@ int main()
 			}
 			//weapon.Border(window.getSize().x, window.getSize().y);
 			newBulletLocation = leadMag[bang].bulletPostion;
+			newTrailLocation = leadMag[bang].trailPosition;
 			//std::cout << newBulletLocation.x;
-			if(newBulletLocation.x >= winX)
+			if(newBulletLocation.x&&newTrailLocation.x >= winX)
 			{
 				leadMag.erase(leadMag.begin());
 				//std::cout << leadMag.size();
 			}
-			if(newBulletLocation.x <= -winX)
+			if(newBulletLocation.x&&newTrailLocation.x <= -winX)
 			{
 				leadMag.erase(leadMag.begin());
 				//std::cout <<leadMag.size();
 			}
-			if(newBulletLocation.y >= winY)
+			if(newBulletLocation.y&&newTrailLocation.y >= winY)
 			{
 				leadMag.erase(leadMag.begin());
 				//std::cout <<leadMag.size();
 			}
-			if(newBulletLocation.x <= -winY)
+			if(newBulletLocation.y&&newTrailLocation.y <= -winY)
 			{
 				leadMag.erase(leadMag.begin());
 				//std::cout <<leadMag.size();
