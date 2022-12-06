@@ -263,7 +263,6 @@ private:
 		//IdleCrawlLeft,
 		//IdleCrawlRight,
 
-		
 		//PistolCrawlUp,
 		//PistolCrawlRight,
 		//PistolCrawlDown,
@@ -1356,7 +1355,7 @@ int main()
 		// draw
 		soldier.Draw( window );
 		weapon.Draw( window );
-		
+				//subtract below (status.) update 
 		sf::Vector2f newBulletLocation;
 		sf::Vector2f newTrailLocation;
 		sf::Vector2f offset;

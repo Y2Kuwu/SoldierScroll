@@ -62,11 +62,6 @@ class Lead
 
     void SetPos(sf::Vector2f newPos, sf::Vector2f newOff)
     {
-        
-        // pX = posX;
-        // pY = posY;
-        // newPos.x = posX;
-        // newPos.y = posY;
         lead.setPosition(newPos);
         leadTrail.setPosition(newOff);
     }

@@ -12,13 +12,20 @@ class Invader
 {
 public:
 
+sf::Vector2f setInvPos;
 sf::Vector2f invPos;
 std::unordered_map <int, int, std::string, int> Enemy;
 bool collision;
+bool alive;
 int health; // = 100
 int hitLanded = 0;
 int leadType;
 int enemyType;
+
+float maxX;
+float maxY;
+float minX;
+float minY;
 
 Invader() = default;
 Invader(int type)
@@ -28,6 +35,11 @@ Invader(int type)
     Enemy[type=3] = health,"Heavy",35; // 14-26
 }
 
+void InvPos(sf::Sprite invade)
+{
+    invade.getPosition() == invPos;
+}
+
 void Hit(sf::Vector2f pos)
 {
     if(l.bulletPostion == invPos)
@@ -35,8 +47,6 @@ void Hit(sf::Vector2f pos)
         collision = true;
         hitLanded+=1;
     }
-    
-
 }
 
 void Dmg(int slugType)
@@ -91,10 +101,56 @@ void Dmg(int slugType)
 
     }
 }
+void EnemyCount(int totEnemies)
+{
+    if(totEnemies <= 3)
+    {
+        //push_back new
+        //draw
+    }
+    else
+    {
+        //wait
+    }
+}
+
+
+void SetPos(float x , float y)
+{
+    maxX = x;
+    minX = -x;
+    maxY = y;
+    minY = y;
+
+
+    setInvPos.x = x+10;
+    setInvPos.y = y;
+}
+
+void Move()
+{
+    if(invPos.x <= maxX && invPos.y <= maxY){
+    //invader.move() //randX randY
+    }
+}
+
+
+void FireShot()
+{
+
+}
 
 void Sights(float xPlain , float yPlain)
 {
-    
+    if(xPlain == invPos.x || yPlain == invPos.y)
+    {
+        FireShot();
+    }
+}
+
+void DrawInv(sf::RenderWindow &window)
+{
+    window.draw(invader);
 }
 //if plyr sf::Vector2f = collision
 
@@ -102,7 +158,7 @@ private:
 int health;
 int dmg;
 int spawnRate;
-sf::Sprite invader
+sf::Sprite invader;
 
 
 
