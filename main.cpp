@@ -63,6 +63,22 @@ public:
 			return bgPtrToTex;
 		}
 	}
+
+	   static std::shared_ptr<sf::Texture> AcquireEnemy( const std::string& bgName )
+	{
+		const auto e = enPtr.find( bgName );
+		if( e != enPtr.end() )
+		{
+			return e->second;
+		}
+		else
+		{
+			auto enPtrToTex = std::make_shared<sf::Texture>();
+			enPtrToTex->loadFromFile( bgName );
+			enPtr.insert( { bgName,enPtrToTex } );
+			return enPtrToTex;
+		}
+	}
         
 	static void clearPtr()
 	{   
@@ -102,16 +118,29 @@ public:
 				++bg;
 			}
 		}
+		for( auto en = enPtr.begin(); en != enPtr.end(); )
+		{
+			if( en->second.unique() )
+			{
+				en = enPtr.erase( en );
+			}
+			else
+			{
+				++en;
+			}
+		}
 	}
 private:
 	static std::unordered_map<std::string,std::shared_ptr<sf::Texture>> actorPtr;
     static std::unordered_map<std::string,std::shared_ptr<sf::Texture>> assetPtr;
     static std::unordered_map<std::string,std::shared_ptr<sf::Texture>> bgPtr;
+	static std::unordered_map<std::string,std::shared_ptr<sf::Texture>> enPtr;
 };
 
 std::unordered_map<std::string,std::shared_ptr<sf::Texture>> Tex::actorPtr;
 std::unordered_map<std::string,std::shared_ptr<sf::Texture>> Tex::assetPtr;
 std::unordered_map<std::string,std::shared_ptr<sf::Texture>> Tex::bgPtr;
+std::unordered_map<std::string,std::shared_ptr<sf::Texture>> Tex::enPtr;
 
 class View
 {
@@ -128,6 +157,7 @@ public:
 		actorPtrToTex = Tex::AcquireActor( "actor.png" );
         assetPtrToTex = Tex::ActorAsset( "asset.png" );
         bgPtrToTex = Tex::AcquireActor( "bg.png" );
+		enPtrToTex = Tex::AcquireEnemy( "enemy.png" );
 		for( int i = 0; i < viewNum; i++ )
 		{
 			frames.emplace_back( sf::Vector2i{ x,y },sf::Vector2i{ wid,hei } );
@@ -136,6 +166,11 @@ public:
 		for( int i = 0; i < viewNum; i++ )
 		{
 			weaponFrames.emplace_back( sf::Vector2i{ x,y },sf::Vector2i{ wid,hei } );
+			x += wid;
+		}
+		for( int i = 0; i < viewNum; i++ )
+		{
+			enemyFrames.emplace_back( sf::Vector2i{ x,y },sf::Vector2i{ wid,hei } );
 			x += wid;
 		}
 	}
@@ -150,6 +185,11 @@ public:
 	{
 		a.setTexture( *assetPtrToTex );
 		a.setTextureRect(weaponFrames[iFrame]);
+	}
+	void SpriteEnemy(sf::Sprite& e) const
+	{
+		e.setTexture( *enPtrToTex );
+		e.setTextureRect(weaponFrames[iFrame]);
 	}
 	void Update( float delta )
 	{
@@ -175,8 +215,10 @@ private:
 	std::shared_ptr<sf::Texture> actorPtrToTex;
     std::shared_ptr<sf::Texture> assetPtrToTex;
     std::shared_ptr<sf::Texture> bgPtrToTex;
+	std::shared_ptr<sf::Texture> enPtrToTex;
 	std::vector<sf::IntRect> frames;
 	std::vector<sf::IntRect> weaponFrames;
+	std::vector<sf::IntRect> enemyFrames;
 	int iFrame = 0;
 	float time = 0.0f;
 };
@@ -339,9 +381,8 @@ public:
 	
 	sf::Vector2f winSz;
 	sf::Vector2f wepPosition = gunSprite.getPosition();
-
-
 	sf::FloatRect playerBounds = sprite.getGlobalBounds();
+
 	//sf::FloatRect healthKit = health.getGlobalBounds();
 	//sf::FloatRect armorKit = armor.getGlobalBounds();
 	//sf::FloatRect ammoKit = ammo.getGlobalBounds();
@@ -485,55 +526,9 @@ public:
 	{
 		winSz.x = totWid;
 		winSz.y = totHeight;
-		
 	}
 	
-	// void Bullet()
-	// {
-	// 	bullet.setPosition(sprLoc);
-	// 	bullet.setSize(sf::Vector2f(10,5));
-	// 	bullet.setFillColor(sf::Color::Black);
-	// 	bullet.setOutlineColor(sf::Color::White);
-	// }
 
-																	//change speed by weapon
-	// void BulletUpdate(const sf::Vector2f& dir)
-	// 	{
-	// float dirx , diry;
-	// bool headingRight = dir.x > 0.0f;
-    // bool headingLeft = dir.x < 0.0f;
-    // bool headingUp = dir.y < 0.0f;
-    // bool headingDown = dir.y > 0.0f;
-    // bool idlRight = velocity.x > 0.0f;
-    // bool idlLeft = velocity.x < 0.0f;
-    // bool idlUp = velocity.y < 0.0f;
-    // bool idlDown = velocity.y > 0.0f;
-	// dirx = dir.x;
-	// diry = dir.y;
-
-			//speed = 160.0f;
-			//velocity = dir * speed; 
-			
-
-		// 	if(headingRight || idlRight)
-		// 	{
-		// 		bullet.setPosition(dirx+=1, dir.y);
-		// 	}
-		// 	if(headingLeft || idlLeft)
-		// 	{
-		// 		bullet.setPosition(dirx-=1, dir.y);
-		// 	}
-		// 	if(headingUp || idlUp)
-		// 	{
-		// 		bullet.setPosition(dir.x, diry-=1);
-		// 	}
-		// 	if(headingDown || idlDown)
-		// 	{
-		// 		bullet.setPosition(dir.x, diry+=1);
-		// 	}
-		// }
-
-        //check which gun is called
 
 void SetWeapon(sf::Vector2f match)
 	{
@@ -890,32 +885,6 @@ void SetWeapon(sf::Vector2f match)
             }
         }
     }
-	//remove
-		// void LeadPos(sf::RectangleShape lead)
-		// {
-		// 	//lead.setPosition(50, 50);
-		// 	lead.setPosition(sprLoc.x, sprLoc.y);
-		// }
-
-		void CountLead(int mag, sf::RectangleShape lead){//int magSize ){
-		
-		// bullet = lead;
-		// bullets.reserve(mag); 
-		// //while(mag-= 1 && mag != 0){
-		// bullets.push_back(lead);
-		//for(b = bullets.begin(); b != bullets.end(); b++){
-		//for (auto b : bullets){
-			//b = bullet;
-		//while (mag -= 1){
-				//rt.draw(bullet);
-			//}
-		//}
-	//	}
-		}
-		
-   
-
-	
 
 	//
 	void SetDirection( const sf::Vector2f& dir )
@@ -940,13 +909,6 @@ void SetWeapon(sf::Vector2f match)
 		}
 		//weapon movement animation
 		
-		
-			//currView = RenderIdx:: 
-			//RenderIdx currView = (RenderIdx)System.Enum.Parse(typeof(RenderIdx), dirSet);
-			//std::map<std::string,std::string> fstring;
-		
-		//
-
 		//crouching animations
 		else{
 		if( dir.x > 0.0f && crouch == true)
@@ -1076,257 +1038,6 @@ private:
 
 
 
-
-
-// 	class Lead{
-// 	private:
-// 	//std::unique_ptr<Lead>bullPtr; //std::make_unique<Lead>();
-	
-
-// 	public:
-// 	sf::Vector2f vel;
-// 	sf::Vector2f bulletPos; // current position for weapon and bullet
-// 	sf::Vector2f direction; // direction of bullet
-// 	std::string trajectory; // string name of matching direction
-
-// 	sf::RectangleShape bullet;
-
-// 	//bullet;
-// 	std::vector<sf::RectangleShape>bullets;
-// 	std::vector<sf::RectangleShape>::iterator bul;
-	
-// 	float bulletSpeed; //= 140.0f;
-// 	float time = 0.0f;
-
-// 	int fullMag;
-// 	int fullMagazine;
-
-// 	int pistolMag;
-// 	int rifleMag;
-// 	int shotSlug;
-	
-
-
-//  void Fire(sf::RenderTarget& rt) const  	//3
-// 	{
-// 		//for(int i = 0; i < fullMag; i++){
-// 		//for(auto b : bullets){
-// 		//for(std::vector<sf::RectangleShape>::iterator it = bullets.begin(); it != bullets.end(); ++it){
-// 		for(int i = 0; i < bullets.size(); i++){
-// 			//for(auto const& bulletz : bullets){
-		
-// 		//if(fullMag!=fullMagazine){
-// 		//rt.draw(Lead::bullet * b = new Lead::bullet);
-// 		//rt.draw();
-// 		//void Erase();
-// 		//bullets[i].setPosition(bulletPos);
-// 		rt.draw(bullets[i]);
-// 	}
-// 	}
-	// Lead(float rad = 400)
-	// 	:	vel(0.0f,0.0f), bulletSpeed(140.0f)
-	// 	{
-	// 		this->bullet.setSize(sf::Vector2f(10 , 5));
-	// 		this->bullet.setFillColor(sf::Color::Black);
-	// 		this->bullet.setOutlineColor(sf::Color::White);
-	// 		this->bullet.setOutlineThickness(2);
-	// 	}
-	// Lead(sf::RectangleShape bullet, float posX, float posY, float dirX, float dirY, float speed)
-	// 	//:	vel(0.0f,0.0f), bulletSpeed(0.0f)
-	// 	{
-	// 		posX = bulletPos.x;
-	// 		posY = bulletPos.y;
-	// 		bullet.setPosition(posY,posY);
-	// 		dirX = direction.x;
-	// 		dirY = direction.y;
-	// 		speed = bulletSpeed;
-
-	// 	}
-	//Lead::~Lead(){}
-		//}
-		
-	//sf::Vector2f bullPos = bullet.getPosition(); //= recBull.getPosition();  will need to be changed
-	//sf::Vector2f bullStart = bullet.setPosition();
-	// void SetBullet(sf::Vector2f pos, std::string traj){
-	// 	 bulletPos = pos;
-	// 	 trajectory = traj;
-
-
-		 
-		// bullet.setPosition(bulletPos);
-	//}
-
-	//  void SetTraj (sf::Vector2f& dir, float delta) {
-	// 	bulletPos += vel * delta;
-	// 	//bullet.setPosition(bulletPos);
-	// 	vel = dir * bulletSpeed;
-	//  	direction = dir;
-
-	// 	bullet.setSize(sf::Vector2f(10 , 5));
-	// 	bullet.setFillColor(sf::Color::Black);
-	// 	bullet.setOutlineColor(sf::Color::White);
-	// 	bullet.setOutlineThickness(2);
-	// 	bullet.setPosition(bulletPos);
-	// 	bullets.push_back(bullet);
-		
-		// if( dir.x > 0.0f ) 
-		// {
-		// 	direction = dir;
-		// 	bullet.setPosition(bulletPos);
-		// }
-		// else if( dir.x < 0.0f )
-		// {
-		// 	direction = dir;
-		// 	bullet.setPosition(bulletPos);
-		// }
-		// else if( dir.y < 0.0f )
-		// {
-		// 	direction = dir;
-		// 	bullet.setPosition(bulletPos);
-		// }
-		// else if( dir.y > 0.0f )
-		// {
-		// 	direction = dir;
-		// 	bullet.setPosition(bulletPos);
-		// }
-	// }
-	
-
-	//  void UpdateShot (float delta)  //5
-	//  {
-	// 	//vel = direction * bulletSpeed;
-	 	
-	// 	//bullet.setPosition(bulletPos);
-		
-	//  	Update(delta);
-	//  }
-
-	// void Update(float delta)  //4
-	// {
-	// 	bulletPos += vel * delta;
-	// 	time += delta;
-	// 	while( time >= .1)
-	// 	{
-	// 		bulletSpeed = 160.0f;
-	// 		//bulletPos += vel * delta;
-	// 		vel = direction * bulletSpeed;
-	// 		time -= .1;
-			
-			
-	// 		//bullets.insert(bullets.end(), fullMag, bullet);
-			
-			
-	// 		//bullets.reserve(fullMag);
-	// 		//bullets.push_back(bullet);
-	// 		//for(int i = 0; i < bullets.size(); i++){
-	// 		if(trajectory == "Up")
-	// 		{
-	// 			direction.y -= 1;
-	// 			//bulletPos.y = direction.y;
-	// 			bullet.setPosition(bulletPos);
-				
-	// 		}
-	// 		if(trajectory == "Down")
-	// 		{
-	// 			direction.y += 1;
-	// 			//bulletPos.y = direction.y;
-	// 			bullet.setPosition(bulletPos);
-				
-	// 		}
-	// 		if(trajectory == "Right")
-	// 		{
-	// 			direction.x += 1;
-	// 			//bulletPos.x = direction.x;
-	// 			bullet.setPosition(bulletPos);
-				
-	// 		}
-	// 		if(trajectory == "Left")
-	// 		{
-	// 			direction.x -= 1;
-	// 			//bulletPos.x = direction.x;
-	// 			bullet.setPosition(bulletPos);
-				
-	// 		}
-			
-	// 		//}
-	// 	}
-	// }
-	// void CountLead(int magazine, sf::Vector2f& dir, float delta) //return if 0 , starting size or ++
-	// {
-	// 	//std::cout << magazine;
-	// 	fullMag = magazine;
-	// 	//fullMagazine = magazine-1;
-	// 	bullets.reserve(magazine);
-	// 	bullets.insert(bullets.end(), fullMag, bullet);
-	// 	SetTraj( dir,  delta);
-	// 	//std::cout << magazine;
-	// 	//
-	// }
-
-	//void DeployLead()
-	//{
-		//bullets.reserve(fullMag);
-		
-		//bullets.push_back(bullet);
-		// for(int i = 0; i < fullMag; i++){
-		// bullets.reserve(fullMag);
-		// bullets.push_back(bullet);
-		
-		// }
-		//bullets.insert(bullets.end(), fullMag, bullet);
-		//bullets.push_back(bullet);
-		//std::cout << bullets.size();
-		//for(bul = bullets.begin(); bul != bullets.end()-1; ++bul)
-		//{
-			// if (bullets[bul] = bullets[bul]+1)
-			// {
-
-		 	// }
-		//auto start = bullets.begin();
-		//auto next = std::next(start, fullMag-1);
-		//for(auto i =0; i < bullets.size(); i++){
-		//this->bullets.insert(bullets.begin(), i, bullet);
-		//*next;
-		//std::cout << i;
-		// while(mag > 0)
-		// {
-		// 	b != bullets.end();
-
-		// }
-		//}
-	//}
-
-
-//  void Fire(sf::RenderTarget& rt, sf::RectangleShape r)  	//3
-// 	{
-// 		//for(int i = 0; i < fullMag; i++){
-// 		//for(auto b : bullets){
-// 		//for(std::vector<sf::RectangleShape>::iterator it = bullets.begin(); it != bullets.end(); ++it){
-// 		//for(int i = 0; i < bullets.size(); i++){
-// 			//for(auto const& bulletz : bullets){
-		
-// 		//if(fullMag!=fullMagazine){
-// 		//rt.draw(Lead::bullet * b = new Lead::bullet);
-// 		//rt.draw();
-// 		//void Erase();
-// 		//bullets[i].setPosition(bulletPos);
-// 		rt.draw(r);
-// 	}
-		//if(direction.x+-1 || direction.y+-1){
-		//if(direction.x == -10){
-		
-		//}
-		//it = bullets.erase(it);
-		
-		//}
-		//}
-	
-	
-	
-
-//};
-
-
 class PlayerTracker{
 public:
 	int ammo; 
@@ -1418,8 +1129,6 @@ public:
 	}
 
 	
-	
-
 	void TrackAmmo(int g){
 		
 		float speed = 140.0f;
@@ -1470,7 +1179,6 @@ public:
 int main()
 {
 	
-
 	float bulletSpeed = 4.0f;
 	Lead led;
 	sf::RenderWindow window( sf::VideoMode( 800,600 ),"SFML window" );
@@ -1496,14 +1204,6 @@ int main()
 	Char soldier( { 400.0f,300.0f } );
 	Char weapon ( { 440.0f, 300.0f } );
 
-	 //border collision
-	//weapon.bullet;
-	//weapon.bullet = bulletStream;
-		// assign position
-	
-	
-	
-	//lead.SetBullet(weapon.bullPos);
 	// timepoint for delta time measurement
 	auto tp = std::chrono::steady_clock::now();
 
@@ -1545,40 +1245,8 @@ int main()
 			soldier.FireCheck(soldier.firing, dir);
 			status.TrackAmmo(gun);
 			status.TrackAllAmmo();
-			
-			//lead.IntPos(weapon.sprLoc.x , weapon.sprLoc.y);
 			fire = true;
-		
-			//status.CreateBullet(soldier.direction, weapon.sprLoc);
-			// if(status.ammo == 84){
-			// 	lead.CountLead(status.ammo , dir, delta);
-			// }
-			// 	lead.SetBullet(weapon.sprLoc, soldier.direction);
-			// 	lead.SetTraj(dir, delta);
-				
-				//lead.DeployLead();
-		
-		//	if(status.ammo == 0 || status.ammo == status.ammo + 50 || status.ammo == 84) // checks if zero or picks up ammo
-		//	{	//reserve space once
-			//lead.CountLead(status.ammo);
-			//}
 			
-			//lead.DeployLead();
-			//lead.UpdateShot(delta);
-			//std::cout << status.ammo; total quantity 
-	//still good?
-			//weapon.CountLead(status.ammo, bulletStream); //only collecting total and passing
-			//weapon.LeadPos(bulletStream);
-	//		
-			//weapon.UpdateBullet(delta, dir, bulletStream);
-			//for(weapon.b = weapon.bullets.begin(); weapon.b != weapon.bullets.end(); ++weapon.b){
-			//(*weapon.b);
-				//get info and pass to Draw()
-			
-			//lead.Fire(window);
-			//lead.Fire( window );
-			
-			//
 			status.setTracker();
 			status.DrawTracker( window);
 			}
@@ -1676,14 +1344,11 @@ int main()
 		soldier.SetDirection( dir );
 		weapon.CheckWeapon(dir);
 		weapon.SetDirection( dir );
-		//weapon.BulletUpdate(dir);
-		//lead.SetTraj( dir );
+
 		// update 
 		soldier.Update( delta );
 		weapon.UpdateGun( delta );
-		//lead.UpdateShot(delta);
-		//lead.Update();
-		//lead.Update(delta);
+	
 		
 		
 		// clear 
@@ -1790,7 +1455,7 @@ int main()
 
 			fire = false;
 		}
-		// update window
+		
 		window.display();
 		
 	}
