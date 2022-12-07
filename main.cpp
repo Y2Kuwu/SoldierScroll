@@ -1,7 +1,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include "lead.h"
-//#include "slug.h"
+#include "invader.h"
 #include <chrono>
 #include <vector>
 #include <iterator>
@@ -411,6 +411,7 @@ public:
 		views[(int)RenderIdx::IdleLeft] = View( 0,64,64,64,1,10.1f );
 		views[(int)RenderIdx::IdleDown] = View( 0,128,64,64,1,10.1f );
 		views[(int)RenderIdx::IdleRight] = View( 0,192,64,64,1,10.1f );
+
 
             //idle animations 
         //Aim + LCtrl //stops movement
@@ -1061,7 +1062,6 @@ public:
 	sf::Text totArmor;
 	sf::Text totHealth;
 	sf::RectangleShape stat;
-	std::vector<sf::RectangleShape>projectile;
 	sf::Font MG;
 	
 
@@ -1180,8 +1180,9 @@ int main()
 	
 	float bulletSpeed = 4.0f;
 	Lead led;
+	Invader inv;
 	sf::RenderWindow window( sf::VideoMode( 800,600 ),"SFML window" );
-	window.setKeyRepeatEnabled(true);
+	//window.setKeyRepeatEnabled(true);
 	float winX = window.getSize().x;
 	float winY = window.getSize().y;
 	sf::Vector2f bulletWH;
@@ -1244,7 +1245,10 @@ int main()
 			soldier.FireCheck(soldier.firing, dir);
 			status.TrackAmmo(gun);
 			status.TrackAllAmmo();
+			inv.Rand();
+		
 			fire = true;
+			
 			
 			status.setTracker();
 			status.DrawTracker( window);

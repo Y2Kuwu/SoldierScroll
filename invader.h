@@ -14,13 +14,15 @@ public:
 
 sf::Vector2f setInvPos;
 sf::Vector2f invPos;
-std::unordered_map <int, int, std::string, int> Enemy;
+
 bool collision;
 bool alive;
 int health; // = 100
 int hitLanded = 0;
 int leadType;
 int enemyType;
+int enemiesOnScreen = 0;
+int randEnemy;
 
 float maxX;
 float maxY;
@@ -28,12 +30,25 @@ float minX;
 float minY;
 
 Invader() = default;
-Invader(int type)
+Invader(std::string type)
 {                                       //slides
-    Enemy[type=1] = health,"Light",20; //0-11
-    Enemy[type=2] = health,"Med",25; //12-23
-    Enemy[type=3] = health,"Heavy",35; // 14-26
+  switch (type)
+  {
+    case 0:
+        type = "inv1";
+
+
+  }
 }
+void Rand()
+{
+    randEnemy = 1 + (rand() % 3);
+    std::string inv = "inv";
+    inv += std::to_string(randEnemy);
+    Invader(inv);
+    
+}
+
 
 void InvPos(sf::Sprite invade)
 {
@@ -46,6 +61,10 @@ void Hit(sf::Vector2f pos)
     {
         collision = true;
         hitLanded+=1;
+    }
+    if(health <= 0)
+    {
+        enemiesOnScreen--;
     }
 }
 
@@ -155,7 +174,7 @@ void DrawInv(sf::RenderWindow &window)
 //if plyr sf::Vector2f = collision
 
 private:
-int health;
+
 int dmg;
 int spawnRate;
 sf::Sprite invader;
