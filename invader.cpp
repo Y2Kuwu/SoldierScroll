@@ -1,5 +1,6 @@
 #include "invader.h"
 
+
 void Invader::SetVars()
 {
     this->mainCounter;

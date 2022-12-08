@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <time.h>
 
+
+
 class Tex
 {
 public:
@@ -374,14 +376,14 @@ public:
     float speed = 115.0f;
 	float sprX;
 	float sprY;
-	sf::Vector2f sprLoc; //= gunSprite.getPosition(); //get pos for weapon bullet origin
+	sf::Vector2f sprLoc;
 	std::string direction;
 	sf::RectangleShape bullet;
 	
 	sf::Vector2f winSz;
 	sf::Vector2f wepPosition = gunSprite.getPosition();
 	sf::FloatRect playerBounds = sprite.getGlobalBounds();
-
+	//add
 	//sf::FloatRect healthKit = health.getGlobalBounds();
 	//sf::FloatRect armorKit = armor.getGlobalBounds();
 	//sf::FloatRect ammoKit = ammo.getGlobalBounds();
@@ -623,16 +625,8 @@ void SetWeapon(sf::Vector2f match)
 		std::string isCrouching;
 		std::string weaponType;
 		std::string match;
-		//fire = firing;
-		//gunValue = gun;
-		
-		//std::cout << gunValue-1;
-		//crouching = crouch;
 		weaponType = weapon[gunValue];
 
-		
-
-		//velocity = dir * speed;
 // WEAPON SPRITE ANIMATIONS
 		//////// MOVING WHILE NOT CROUCHING OR FIRING
 		if(headingRight && firing == false && crouch == false)
@@ -642,9 +636,9 @@ void SetWeapon(sf::Vector2f match)
 		}
 		else if(headingLeft && firing == false && crouch == false)
 		{
-			direction = "Left"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			direction = "Left"; 
 			match = weaponType + direction;
-			//gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
+
 		}
 		else if(headingUp && firing == false && crouch == false)
 		{
@@ -665,9 +659,9 @@ void SetWeapon(sf::Vector2f match)
 		}
 		else if(idlLeft && firing == false && crouch == true)
 		{
-			direction = "Left"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			direction = "Left"; 
 			match = weaponType + direction;
-			//gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
+		
 		}
 		else if(idlUp && firing == false && crouch == true)
 		{
@@ -689,10 +683,10 @@ void SetWeapon(sf::Vector2f match)
 		}
 		else if(headingLeft && crouch == true && firing == false)
 		{
-			direction = "Left"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			direction = "Left"; 
 			isCrouching = "Crouch";
 			match = weaponType + isCrouching + direction;
-			//gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
+
 		}
 		else if(headingUp && crouch == true && firing == false)
 		{
@@ -716,10 +710,10 @@ void SetWeapon(sf::Vector2f match)
 		}
 		else if(idlLeft && crouch == true && firing == false)
 		{
-			direction = "Left"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			direction = "Left"; 
 			isCrouching = "Crouch";
 			match = weaponType + isCrouching + direction;
-			//gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
+
 		}
 		else if(idlUp && crouch == true && firing == false)
 		{
@@ -745,11 +739,10 @@ void SetWeapon(sf::Vector2f match)
 		}
 		else if(idlLeft && crouch == true && firing == true)
 		{
-			direction = "Left"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			direction = "Left"; 
 			isCrouching = "Crouch";
 			isFiring = "Fire";
 			match = weaponType + isCrouching + direction;
-			//gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
 		}
 		else if(idlUp && crouch == true && firing == true)
 		{
@@ -777,11 +770,10 @@ void SetWeapon(sf::Vector2f match)
 		}
 		else if(headingLeft && crouch == true && firing == true)
 		{
-			direction = "Left"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			direction = "Left"; 
 			isCrouching = "Crouch";
 			isFiring = "Fire";
 			match = weaponType + isCrouching + direction;
-			//gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
 		}
 		else if(headingUp && crouch == true && firing == true)
 		{
@@ -809,26 +801,22 @@ void SetWeapon(sf::Vector2f match)
 		}
 		else if(headingLeft && crouch == false && firing == true)
 		{
-			direction = "Left"; //remember to mirror sprite.setTextureRect(sf::IntRect(width, 0, -width, height));
+			direction = "Left"; 
 			isFiring = "Fire";
 			match = weaponType + isFiring + direction;
-			//gunSprite.setTextureRect(sf::IntRect(gunViews->wid, 0, -gunViews->wid, gunViews->hei));
 		}
 		else if(headingUp && crouch == false && firing == true)
 		{
 			direction = "Up";
-			//isCrouching = "Crouch";
 			isFiring = "Fire";
 			match = weaponType + isFiring + direction;
 		}
 		else if(headingDown && crouch == false && firing == true)
 		{
 			direction = "Down";
-			//isCrouching = "Crouch";
 			isFiring = "Fire";
 			match = weaponType + isFiring + direction;
 		}
-		//SetWeapon();
 		}
 		}
 		}
@@ -867,24 +855,7 @@ void SetWeapon(sf::Vector2f match)
 		fire = firing;
 		CheckWeapon(dir);
 	}
-	///  //
 	
-
-
-
-
-	//
-
-        //check toggle for auto fire
-		//remove or adjust
-    void CheckIfAuto(int clicked)
-    {
-        for(int clicked = 0; clicked < 2; clicked++){
-            if(clicked %2 == 0){
-                //set to auto
-            }
-        }
-    }
 
 	//
 	void SetDirection( const sf::Vector2f& dir )
@@ -929,9 +900,7 @@ void SetWeapon(sf::Vector2f match)
 			currView = RenderIdx::CrouchDown;
 		}
 		
-    //
-     
-        //
+
 		else
 		{
 			if( velocity.x > 0.0f )
@@ -972,24 +941,16 @@ void SetWeapon(sf::Vector2f match)
 		}
 		}
 		
-	
 		velocity = dir * speed;
 	}
     
-    
-   
 
 	void Update( float delta )
 	{
 		currPos += velocity * delta;
 		views[int( currView )].Update( delta );
 		views[int( currView )].SpritePaint( sprite);
-		// copy function same mirror location
-		// gunViews[int( currWepView )].Update( delta );
-		// gunViews[int( currWepView )].SpriteGun( gunSprite);
 		sprite.setPosition( currPos );
-		
-		//gunSprite.setPosition( currPos ); // if left flip/mirror sprite
 	}
 
 	void UpdateGun( float delta)
@@ -997,9 +958,6 @@ void SetWeapon(sf::Vector2f match)
 		SetWeapon(matchPos);
 		currPos += velocity * delta;
 		SetWeapon(matchPos);
-		//views[int( currView )].Update( delta );
-		//views[int( currView )].SpritePaint( sprite);
-		// copy function same mirror location
 		gunViews[int( currWepView )].Update( delta );
 		gunViews[int( currWepView )].SpriteGun( gunSprite);
 		//sprite.setPosition( currPos );
@@ -1187,8 +1145,11 @@ int main()
 	float winY = window.getSize().y;
 	sf::Vector2f bulletWH;
 	sf::Vector2f trailWH;
-	
-	
+
+
+	Invader i;
+
+
 	{
 		Char soldier( { 100.0f,100.0f } );
 		Char soldierCorpse( { 100.0f,200.0f } );
@@ -1197,8 +1158,10 @@ int main()
 	}
 	bool fire;
 	std::vector<Lead>leadMag;
+	std::vector<Invader>vs;
 	Tex::clearPtr();
 	PlayerTracker status;
+	
 	
 
 	Char soldier( { 400.0f,300.0f } );
@@ -1354,6 +1317,7 @@ int main()
 		// update 
 		soldier.Update( delta );
 		weapon.UpdateGun( delta );
+		
 	
 		//inv.CheckTime();
 		
@@ -1368,6 +1332,8 @@ int main()
 		sf::Vector2f offset;
 		status.setTracker(); // track status of player
 		status.DrawTracker( window );
+
+
 		if(fire == true)
 		{
 			if(weapon.direction == "Up" || "Down")

@@ -7,7 +7,7 @@
 
 #include "lead.h"
 //location , model (from main or transfer) , status (health, dmg, etc.), spawn rate,  
-Lead l;
+
 
 class Invader
 {
@@ -30,19 +30,21 @@ int leadType;
 int enemiesOnScreen = 0;
 int dmg;
 
+
+
 float spd;
 const float maxX = 800;
 const float maxY = 600;
-const float minX = -maxX;
-const float minY = -maxY;
 
 void SetVars();
 void Counter();
 void SetTexture();
 
 public: 
-Invader(float posX , float posY);
-virtual ~Invader();
+//Invader() = default;
+Invader();
+Invader(float px , float py, float spd);
+//virtual ~Invader();
 
 const sf::FloatRect InvBox() const;
 
@@ -51,6 +53,10 @@ const int& DmgTaken() const;
 
 void UpdateInv();
 void RenderInv(sf::RenderTarget* rt);
+
+float px;
+float py;
+
 
 };
 
