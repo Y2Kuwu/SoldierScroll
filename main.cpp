@@ -1180,7 +1180,7 @@ int main()
 	
 	float bulletSpeed = 4.0f;
 	Lead led;
-	Invader inv;
+	//Invader inv;
 	sf::RenderWindow window( sf::VideoMode( 800,600 ),"SFML window" );
 	//window.setKeyRepeatEnabled(true);
 	float winX = window.getSize().x;
@@ -1225,8 +1225,11 @@ int main()
 			const auto new_tp = std::chrono::steady_clock::now();
 			delta = std::chrono::duration<float>( new_tp - tp ).count();
 			tp = new_tp;
+			
 		}
 
+		
+		
 		// make into switch cases?
 		sf::Vector2f dir = { 0.0f,0.0f };
         int autoCheck = 0;
@@ -1245,7 +1248,7 @@ int main()
 			soldier.FireCheck(soldier.firing, dir);
 			status.TrackAmmo(gun);
 			status.TrackAllAmmo();
-			inv.Rand();
+			//inv.Rand();
 		
 			fire = true;
 			
@@ -1352,7 +1355,7 @@ int main()
 		soldier.Update( delta );
 		weapon.UpdateGun( delta );
 	
-		
+		//inv.CheckTime();
 		
 		// clear 
 		window.clear();
