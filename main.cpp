@@ -996,6 +996,7 @@ private:
 
 
 
+
 class PlayerTracker{
 public:
 	int ammo; 
@@ -1132,25 +1133,32 @@ public:
 
 };
 
+class Inv1 : public Invader
+{
+	
+};
+
+
 
 int main()
 {
 	
 	float bulletSpeed = 4.0f;
 	Lead led;
-	//Invader inv;
+	
 	sf::RenderWindow window( sf::VideoMode( 800,600 ),"SFML window" );
 	//window.setKeyRepeatEnabled(true);
 	float winX = window.getSize().x;
 	float winY = window.getSize().y;
 	sf::Vector2f bulletWH;
 	sf::Vector2f trailWH;
-
-
-	Invader i;
+	// Invader (winX, winY/2, bulletSpeed/2);
 
 
 	{
+		
+	
+
 		Char soldier( { 100.0f,100.0f } );
 		Char soldierCorpse( { 100.0f,200.0f } );
 		Char weapon ({20.0f,20.0f});

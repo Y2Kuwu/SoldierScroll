@@ -2,27 +2,28 @@
 #define INVADER_H
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
-#include <tuple>
+//#include <tuple>
 #include <unistd.h>
 
 #include "lead.h"
 //location , model (from main or transfer) , status (health, dmg, etc.), spawn rate,  
-
+Lead bullet;
 
 class Invader
 {
 private:
 sf::Vector2f setInvPos;
 sf::Vector2f invPos;
+float xLoc;
+float yLoc;
+
 
 sf::Sprite inv;
-
+std::vector<sf::Sprite>sprVec;
 bool collision;
 bool alive;
-
 unsigned mainCounter;
 int count;
-
 int type;
 int health; // = 100
 int hitLanded = 0;
@@ -30,26 +31,147 @@ int leadType;
 int enemiesOnScreen = 0;
 int dmg;
 
-
-
 float spd;
 const float maxX = 800;
 const float maxY = 600;
 
-void SetVars();
-void Counter();
-void SetTexture();
+// void SetVars();
+// void Counter();
+// void SetTexture();
 
 public: 
 //Invader() = default;
-Invader();
-Invader(float px , float py, float spd);
+
+//Invader(float px , float py, float spd);
 //virtual ~Invader();
+void SetPos(float x, float y)
+{
+    x = xLoc;
+    y = yLoc;
+    
+}
+float GetPos()
+{
+    return xLoc, yLoc;
+}
+
+void SetType(int invType)
+{
+    invType = type;
+    alive = true;
+    enemiesOnScreen+=1;
+}
+
+int GetType()
+{
+    return type;
+}
+
+void TypeSpawn()
+{
+    if(enemiesOnScreen <= 3)
+    {
+    sprVec.push_back(this->inv);
+    }
+}
+
+void SetDamageReport(int damage, int lead)
+{
+    if(bullet.bulletPostion.x == xLoc || bullet.bulletPostion.y == yLoc)
+    {
+        hitLanded +=1;
+    //leadType = lead;
+    dmg = damage;
+    switch(lead){
+    case 1:
+        if(type = 1)
+        {
+            dmg = -25;
+        }
+        if(type = 2)
+        {
+            dmg = -20;
+        }
+        if(type = 3)
+        {
+            dmg = -10;
+        }
+        break;
+    case 2:
+        if(type = 1)
+        {
+            dmg = -30;
+        }
+        if(type = 2)
+        {
+            dmg = -25;
+        }
+        if(type = 3)
+        {
+            dmg = -15;
+        }
+    break;
+    case 3:
+        if(type = 1)
+        {
+            dmg = -60;
+        }
+        if(type = 2)
+        {
+            dmg = -60;
+        }
+        if(type = 3)
+        {
+            dmg = -35;
+        }
+    break;
+    }
+    }
+}
+int GetDmgReport()
+{
+    return dmg, hitLanded;
+}
+
+void CheckDmg()
+{
+    if(hitLanded == 0)
+    {
+        dmg = 0;
+        health = 100;
+        alive = true;
+    }
+    if(hitLanded > 0)
+    {
+        health = health + dmg;
+    }
+    if(health <= 0)
+    {
+        alive = false;
+    }
+}
+
+void Delete()
+{
+    for(std::vector<sf::Sprite>::iterator spr = sprVec.begin(); spr != sprVec.end(); spr++){
+    if(alive = false)
+    {
+        spr = sprVec.erase(spr);
+    }
+    }
+}
+
+void Draw(sf::RenderWindow &window)
+{
+    window.draw(this->inv);
+}
+
 
 const sf::FloatRect InvBox() const;
 
-const int& PointCount() const;
-const int& DmgTaken() const;
+
+// const int& PointCount() const;
+// const int& DmgTaken() const;
 
 void UpdateInv();
 void RenderInv(sf::RenderTarget* rt);
