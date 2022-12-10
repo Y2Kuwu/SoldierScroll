@@ -1135,6 +1135,8 @@ public:
 
 class Inv1 : public Invader
 {
+	int typeOf;
+	void TypeSpawn();
 	
 };
 
@@ -1439,5 +1441,5 @@ int main()
 		window.display();
 		
 	}
-	return EXIT_SUCCESS;
+	
 }
