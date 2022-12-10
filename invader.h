@@ -19,7 +19,7 @@ float yLoc;
 
 
 sf::Sprite inv;
-std::vector<sf::Sprite>sprVec;
+//std::vector<sf::Sprite>sprVec;
 bool collision;
 bool alive;
 unsigned mainCounter;
@@ -44,6 +44,11 @@ public:
 
 //Invader(float px , float py, float spd);
 //virtual ~Invader();
+Invader()
+{
+    inv.setPosition(xLoc, yLoc);
+}
+
 void SetPos(float x, float y)
 {
     x = xLoc;
@@ -71,17 +76,18 @@ void TypeSpawn()
 {
     if(enemiesOnScreen <= 3)
     {
-    sprVec.push_back(this->inv);
+    //get texture / push
+    //sprVec.push_back(this->inv);
     }
 }
 
-void SetDamageReport(int damage, int lead)
+void SetDamageReport(int lead)
 {
     if(bullet.bulletPostion.x == xLoc || bullet.bulletPostion.y == yLoc)
     {
         hitLanded +=1;
     //leadType = lead;
-    dmg = damage;
+    
     switch(lead){
     case 1:
         if(type = 1)
@@ -151,15 +157,15 @@ void CheckDmg()
     }
 }
 
-void Delete()
-{
-    for(std::vector<sf::Sprite>::iterator spr = sprVec.begin(); spr != sprVec.end(); spr++){
-    if(alive = false)
-    {
-        spr = sprVec.erase(spr);
-    }
-    }
-}
+// void Delete()
+// {
+//     for(std::vector<sf::Sprite>::iterator spr = sprVec.begin(); spr != sprVec.end(); spr++){
+//     if(alive == false)
+//     {
+//         spr = sprVec.erase(spr);
+//     }
+//     }
+// }
 
 void Draw(sf::RenderWindow &window)
 {

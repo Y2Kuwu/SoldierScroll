@@ -1133,12 +1133,12 @@ public:
 
 };
 
-class Inv1 : public Invader
-{
-	int typeOf;
-	void TypeSpawn();
+// class Inv1 : public Invader
+// {
+// 	int typeOf;
+// 	void TypeSpawn();
 	
-};
+// };
 
 
 
@@ -1167,12 +1167,23 @@ int main()
 		Char weaponEmpty ({20.0f,40.0f});
 	}
 	bool fire;
+	int randEnemy = 1+(rand() % 3);
 	std::vector<Lead>leadMag;
 	std::vector<Invader>vs;
+
 	Tex::clearPtr();
 	PlayerTracker status;
+	Invader inv;
+
 	
-	
+	inv.SetPos(winX,winY/2);
+	inv.GetPos();
+	inv.SetType(randEnemy);
+	inv.GetType();
+	//std::cout << randEnemy;
+	inv.TypeSpawn();
+	vs.push_back(inv);
+	Invader();
 
 	Char soldier( { 400.0f,300.0f } );
 	Char weapon ( { 440.0f, 300.0f } );
@@ -1336,6 +1347,9 @@ int main()
 		// draw
 		soldier.Draw( window );
 		weapon.Draw( window );
+
+		inv.Draw(window);
+
 				//subtract below (status.) update 
 		sf::Vector2f newBulletLocation;
 		sf::Vector2f newTrailLocation;
@@ -1438,8 +1452,10 @@ int main()
 			fire = false;
 		}
 		
+		inv.SetDamageReport(gun);
+		inv.CheckDmg();
 		window.display();
 		
 	}
-	
+	return EXIT_SUCCESS;
 }
